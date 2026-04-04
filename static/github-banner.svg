@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 640000 48400"
+   role="img"
+   aria-labelledby="title desc"
+   version="1.1"
+   id="svg16"
+   width="640000"
+   height="48400"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <title
+     id="title">Hack4Gov Animated Banner</title>
+  <desc
+     id="desc">Neon grid with moving scanline and blinking status dots</desc>
+  <defs
+     id="defs4">
+    <pattern
+       xlink:href="#grid"
+       id="pattern2"
+       patternTransform="scale(1)" />
+    <linearGradient
+       id="bg"
+       x1="0"
+       x2="0"
+       y1="0"
+       y2="419.52353"
+       gradientTransform="scale(1.9069252,0.52440442)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0%"
+         stop-color="#0b0b0f"
+         id="stop1" />
+      <stop
+         offset="100%"
+         stop-color="#0f0f1a"
+         id="stop2" />
+    </linearGradient>
+    <linearGradient
+       id="accent"
+       x1="0"
+       x2="1"
+       y1="0"
+       y2="0">
+      <stop
+         offset="0%"
+         stop-color="#ff5f6d"
+         id="stop3" />
+      <stop
+         offset="100%"
+         stop-color="#ffc371"
+         id="stop4" />
+    </linearGradient>
+    <pattern
+       id="grid"
+       width="32"
+       height="32"
+       patternUnits="userSpaceOnUse">
+      <path
+         d="M32 0H0V32"
+         fill="none"
+         stroke="#1d1d2e"
+         stroke-width="1"
+         id="path4" />
+    </pattern>
+    <linearGradient
+       xlink:href="#accent"
+       id="linearGradient16"
+       x1="-0.35921061"
+       y1="-11.135529"
+       x2="21.911846"
+       y2="-11.135529"
+       gradientTransform="scale(5.5677644,0.1796053)"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       xlink:href="#accent"
+       id="linearGradient17"
+       x1="-209.76176"
+       y1="0"
+       x2="0"
+       y2="0"
+       gradientTransform="matrix(0.6844606,0,0,0.68715058,182.60565,37.444652)"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       xlink:href="#accent"
+       id="linearGradient2"
+       x1="-11"
+       y1="-11"
+       x2="111"
+       y2="-11"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       xlink:href="#accent"
+       id="linearGradient3"
+       x1="-0.37115374"
+       y1="187.92751"
+       x2="11.753202"
+       y2="187.92751"
+       gradientTransform="scale(4.0414519,0.24743583)"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <rect
+     width="800"
+     height="220"
+     fill="url(#bg)"
+     id="rect4"
+     x="0"
+     y="0"
+     style="fill:url(#bg)" />
+  <rect
+     width="800"
+     height="220"
+     fill="url(#grid)"
+     opacity="0.6"
+     id="rect5"
+     x="0"
+     y="0"
+     style="fill:url(#pattern2)" />
+  <!-- Moving scanline -->
+  <path
+     id="scan"
+     x="39.03199"
+     y="37.444653"
+     width="142.57401"
+     height="144.13792"
+     fill="url(#accent)"
+     opacity="0.18"
+     style="fill:url(#linearGradient17);stroke-width:0.685804"
+     d="M 61.331989,37.444653 H 159.306 c 12.3542,0 22.3,9.945799 22.3,22.299999 v 99.537928 c 0,12.3542 -9.9458,22.3 -22.3,22.3 H 61.331989 c -12.354199,0 -22.299999,-9.9458 -22.299999,-22.3 V 59.744652 c 0,-12.3542 9.9458,-22.299999 22.299999,-22.299999 z"
+     rx="22.299999">
+    <animate
+       attributeName="x"
+       from="-200"
+       to="800"
+       dur="6s"
+       repeatCount="indefinite" />
+  </path>
+  <!-- Left side badge -->
+  <g
+     transform="translate(60,60)"
+     id="g12">
+    <rect
+       x="-10"
+       y="-10"
+       width="120"
+       height="120"
+       rx="14"
+       fill="#0f0f18"
+       stroke="url(#accent)"
+       stroke-width="2"
+       id="rect6"
+       style="stroke:url(#linearGradient2)" />
+    <g
+       transform="translate(10,10)"
+       id="g11">
+      <circle
+         cx="20"
+         cy="20"
+         r="6"
+         fill="#ff5f6d"
+         id="circle6">
+        <animate
+           attributeName="opacity"
+           values="1;0.4;1"
+           dur="1.6s"
+           repeatCount="indefinite" />
+      </circle>
+      <circle
+         cx="44"
+         cy="20"
+         r="6"
+         fill="#ffc371"
+         id="circle7">
+        <animate
+           attributeName="opacity"
+           values="0.5;1;0.5"
+           dur="1.2s"
+           repeatCount="indefinite" />
+      </circle>
+      <circle
+         cx="68"
+         cy="20"
+         r="6"
+         fill="#7cf7b2"
+         id="circle8">
+        <animate
+           attributeName="opacity"
+           values="1;0.2;1"
+           dur="2s"
+           repeatCount="indefinite" />
+      </circle>
+      <path
+         d="M 0,48 H 80 M 0,64 H 80 M 0,80 h 56"
+         fill="none"
+         stroke="#2f2f46"
+         stroke-width="3"
+         stroke-linecap="round"
+         id="path8" />
+      <path
+         d="M 0,48 H 46"
+         stroke="url(#accent)"
+         stroke-width="3"
+         stroke-linecap="round"
+         id="path9"
+         style="stroke:url(#linearGradient3)">
+        <animate
+           attributeName="stroke-dasharray"
+           from="0 80"
+           to="80 0"
+           dur="3s"
+           repeatCount="indefinite" />
+      </path>
+      <path
+         d="M 0,64 H 28"
+         stroke="#7cf7b2"
+         stroke-width="3"
+         stroke-linecap="round"
+         id="path10">
+        <animate
+           attributeName="stroke-dasharray"
+           from="0 80"
+           to="80 0"
+           dur="2s"
+           repeatCount="indefinite" />
+      </path>
+      <path
+         d="M 0,80 H 36"
+         stroke="#ffc371"
+         stroke-width="3"
+         stroke-linecap="round"
+         id="path11">
+        <animate
+           attributeName="stroke-dasharray"
+           from="0 80"
+           to="80 0"
+           dur="2.6s"
+           repeatCount="indefinite" />
+      </path>
+    </g>
+  </g>
+  <!-- Title + subtitle -->
+  <g
+     transform="translate(210,86)"
+     id="g13">
+    <text
+       x="0"
+       y="0"
+       fill="#e9ecff"
+       font-family="Rajdhani, 'Share Tech Mono', monospace"
+       font-size="42px"
+       font-weight="700"
+       letter-spacing="4"
+       id="text12">HACK<tspan
+   style="fill:#e70d04;fill-opacity:1"
+   id="tspan16">4</tspan>GOV</text>
+    <text
+       x="0"
+       y="32"
+       fill="#ff5f6d"
+       font-family="'Share Tech Mono', monospace"
+       font-size="14px"
+       letter-spacing="3"
+       id="text13">capture the flag / basilian state college</text>
+  </g>
+  <!-- Animated underline -->
+  <g
+     transform="matrix(1.4161002,0,0,1,208.16257,132.35261)"
+     id="g14">
+    <line
+       x1="0"
+       y1="0"
+       x2="320"
+       y2="0"
+       stroke="#1d1d2e"
+       stroke-width="4"
+       stroke-linecap="round"
+       id="line13" />
+    <line
+       x1="0"
+       y1="0"
+       x2="120"
+       y2="0"
+       stroke="url(#accent)"
+       stroke-width="4"
+       stroke-linecap="round"
+       id="line14"
+       style="stroke:url(#linearGradient16)">
+      <animate
+         attributeName="x2"
+         values="40;260;40"
+         dur="4s"
+         repeatCount="indefinite" />
+    </line>
+  </g>
+  <!-- Orbiting dot -->
+  <g
+     transform="translate(658.24249,131.35706)"
+     id="g15">
+    <circle
+       cx="0"
+       cy="0"
+       r="46"
+       fill="none"
+       stroke="#1d1d2e"
+       stroke-width="2"
+       stroke-dasharray="6, 6"
+       id="circle14" />
+    <circle
+       id="orb"
+       r="6"
+       fill="#7cf7b2"
+       cx="0"
+       cy="0">
+      <animateMotion
+         dur="5s"
+         repeatCount="indefinite"
+         rotate="auto">
+        <mpath
+           href="#orbit-path" />
+      </animateMotion>
+    </circle>
+  </g>
+  <path
+     id="orbit-path"
+     d="m 594,110 a 46,46 0 1 0 92,0 46,46 0 1 0 -92,0"
+     fill="none" />
+  <!-- Footer ticks -->
+  <g
+     fill="#2f2f46"
+     font-family="'Share Tech Mono', monospace"
+     font-size="10px"
+     letter-spacing="2"
+     id="g16"
+     transform="translate(17.114572,1.7797553)"
+     style="fill:#ffffff;fill-opacity:1">
+    <text
+       x="20"
+       y="200"
+       id="text15"
+       style="fill:#ffffff;fill-opacity:1">CCS WEEK 2025</text>
+    <text
+       x="640"
+       y="200"
+       id="text16"
+       style="fill:#ffffff;fill-opacity:1">APR 21 – 23</text>
+  </g>
+</svg>
