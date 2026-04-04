@@ -1,0 +1,392 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+  .hack-root {
+    background: #0a0a0a;
+    min-height: 100vh;
+    font-family: 'Rajdhani', sans-serif;
+    color: #f0f0f0;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .circuit-bg {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    opacity: 0.06;
+    background-image:
+      linear-gradient(#8B1A1A 1px, transparent 1px),
+      linear-gradient(90deg, #8B1A1A 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  .top-bar {
+    background: #8B1A1A;
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 2px solid #c0392b;
+    position: relative;
+    z-index: 2;
+    flex-wrap: wrap;
+  }
+
+  .top-bar-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #ff4444;
+    box-shadow: 0 0 6px #ff4444;
+    animation: blink 1.2s infinite;
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .top-bar-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: #ffd0d0;
+    letter-spacing: 2px;
+  }
+
+  .header {
+    text-align: center;
+    padding: 32px 24px 16px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .logo-badge {
+    width: 72px; height: 72px;
+    border-radius: 12px;
+    background: #0a0a0a;
+    border: 2px solid #c0392b;
+    display: flex; align-items: center; justify-content: center;
+    padding: 6px;
+    box-shadow: 0 0 12px rgba(139, 26, 26, 0.35);
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  .logo-badge img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  .event-title {
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: 6px;
+    color: #fff;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .event-subtitle {
+    font-size: 14px;
+    color: #A0A0A0;
+    letter-spacing: 3px;
+    font-family: 'Share Tech Mono', monospace;
+    margin-top: 6px;
+  }
+
+  .event-date {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 4px 16px;
+    border: 1px solid #8B1A1A;
+    border-radius: 2px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: #c0392b;
+    letter-spacing: 2px;
+  }
+
+  .form-card {
+    max-width: 540px;
+    margin: 20px auto 40px;
+    background: #111;
+    border: 1px solid #2a0a0a;
+    border-top: 3px solid #8B1A1A;
+    border-radius: 4px;
+    padding: 32px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .form-card::before {
+    content: 'REGISTER.EXE';
+    position: absolute;
+    top: -1px; left: 20px;
+    background: #8B1A1A;
+    color: #fff;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 2px 10px;
+    border-radius: 0 0 4px 4px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    display: block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: #A0A0A0;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .form-label span {
+    color: #c0392b;
+    margin-left: 2px;
+  }
+
+  .form-input {
+    width: 100%;
+    background: #0a0a0a;
+    border: 1px solid #2a0a0a;
+    border-left: 3px solid #8B1A1A;
+    color: #f0f0f0;
+    padding: 10px 14px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    border-radius: 2px;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-input:focus {
+    border-color: #c0392b;
+    border-left-color: #ff4444;
+    background: #0f0505;
+  }
+
+  .form-input::placeholder { color: #333; }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    margin-top: 8px;
+    padding: 14px;
+    background: #8B1A1A;
+    border: none;
+    border-bottom: 3px solid #5a0f0f;
+    color: #fff;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  .submit-btn:hover { background: #a52020; }
+  .submit-btn:active { transform: translateY(2px); border-bottom-width: 1px; }
+
+  .notice {
+    text-align: center;
+    margin-top: 14px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: #444;
+    letter-spacing: 1px;
+  }
+
+  .notice a {
+    color: #8B1A1A;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .notice a:hover { color: #c0392b; }
+
+  .toast {
+    display: none;
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%);
+    background: #1a3a1a;
+    border: 1px solid #2d6a2d;
+    border-left: 4px solid #2ecc71;
+    color: #2ecc71;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    padding: 12px 24px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+    z-index: 999;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateX(-50%) translateY(10px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+
+  .corner-tl, .corner-br {
+    position: absolute;
+    width: 20px; height: 20px;
+  }
+  .corner-tl { top: -1px; left: -1px; border-top: 2px solid #c0392b; border-left: 2px solid #c0392b; }
+  .corner-br { bottom: -1px; right: -1px; border-bottom: 2px solid #c0392b; border-right: 2px solid #c0392b; }
+
+  /* -------- Responsive -------- */
+  @media (max-width: 640px) {
+    .hack-root { padding-bottom: 40px; }
+    .top-bar { padding: 10px 14px; gap: 8px; }
+    .top-bar-text { font-size: 11px; letter-spacing: 1.5px; }
+    .header { padding: 24px 16px 12px; }
+    .logo-area { flex-direction: column; gap: 10px; }
+    .event-title { font-size: 30px; letter-spacing: 4px; }
+    .event-subtitle { font-size: 12px; letter-spacing: 2px; }
+    .event-date { display: block; margin-top: 12px; font-size: 11px; }
+    .form-card { margin: 12px 12px 28px; padding: 22px; }
+    .form-row { grid-template-columns: 1fr; gap: 12px; }
+    .form-input { font-size: 13px; padding: 10px 12px; }
+    .submit-btn { font-size: 16px; padding: 12px; }
+    .notice { font-size: 10px; line-height: 1.4; padding: 0 6px; }
+  }
+</style>
+
+<div class="hack-root">
+  <div class="circuit-bg"></div>
+
+  <div class="top-bar">
+    <div class="top-bar-dot"></div>
+    <span class="top-bar-text">CCS WEEK 2025 — APR 20–23 — BASILAN STATE COLLEGE</span>
+  </div>
+
+  <div class="header">
+    <div class="logo-area">
+      <div class="logo-badge">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Hack4Gov logo">
+      </div>
+      <div>
+        <div class="event-title">HACK<span style="color:#8B1A1A">4</span>GOV</div>
+        <div class="event-subtitle">capture the flag competition</div>
+      </div>
+    </div>
+    <div class="event-date">APR 20 – 23, 2025 &nbsp;|&nbsp; CCS WEEK</div>
+  </div>
+
+  <div class="form-card">
+    <div class="corner-tl"></div>
+    <div class="corner-br"></div>
+
+    <div class="form-group">
+      <label class="form-label">Full Name <span>*</span></label>
+      <input class="form-input" id="f-name" type="text" placeholder="e.g. Juan Dela Cruz" />
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Age <span>*</span></label>
+        <input class="form-input" id="f-age" type="number" placeholder="e.g. 20" min="15" max="99" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Course &amp; Year <span>*</span></label>
+        <input class="form-input" id="f-course" type="text" placeholder="e.g. BSCS 3" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Contact Number <span>*</span></label>
+      <input class="form-input" id="f-contact" type="tel" placeholder="e.g. 09XXXXXXXXX" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Email Address <span>*</span></label>
+      <input class="form-input" id="f-email" type="email" placeholder="e.g. juan@email.com" />
+    </div>
+
+    <button class="submit-btn" onclick="handleSubmit()">[ REGISTER NOW ]</button>
+
+    <p class="notice">
+      A confirmation link will be sent to your email. &nbsp;|&nbsp;
+      <a href="/participants">View confirmed participants →</a>
+    </p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  if (isError) {
+    t.style.borderLeftColor = '#e74c3c';
+    t.style.color = '#e74c3c';
+    t.style.background = '#1a0a0a';
+    t.style.borderColor = '#5a1a1a';
+  } else {
+    t.style.borderLeftColor = '#2ecc71';
+    t.style.color = '#2ecc71';
+    t.style.background = '#1a3a1a';
+    t.style.borderColor = '#2d6a2d';
+  }
+  setTimeout(() => t.style.display = 'none', 4000);
+}
+
+function handleSubmit() {
+  const name = document.getElementById('f-name').value.trim();
+  const age = document.getElementById('f-age').value.trim();
+  const course = document.getElementById('f-course').value.trim();
+  const contact = document.getElementById('f-contact').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+
+  if (!name || !age || !course || !contact || !email) {
+    showToast('> ERROR: All fields are required.', true); return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showToast('> ERROR: Invalid email address.', true); return;
+  }
+
+  const btn = document.querySelector('.submit-btn');
+  btn.textContent = '[ SENDING... ]';
+  btn.disabled = true;
+
+  fetch('/api/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, age, course_year: course, contact_number: contact, email })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.success) {
+      showToast('> SUCCESS: Check your email to confirm registration!', false);
+      document.querySelectorAll('.form-input').forEach(i => i.value = '');
+    } else {
+      showToast('> ERROR: ' + (data.message || 'Registration failed.'), true);
+    }
+  })
+  .catch(() => showToast('> ERROR: Could not connect to server.', true))
+  .finally(() => {
+    btn.textContent = '[ REGISTER NOW ]';
+    btn.disabled = false;
+  });
+}
+</script>

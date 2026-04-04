@@ -1,0 +1,9 @@
+# Install this by running:
+#   pip install -r requirements.txt
+#
+# NOTE: sqlite3 is NOT listed here because it comes
+# built-in with Python — no installation needed!
+# PythonAnywhere also has Flask pre-installed,
+# but it's good practice to list it anyway.
+
+flask

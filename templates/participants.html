@@ -1,0 +1,352 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+  .p-root {
+    background: #0a0a0a;
+    min-height: 100vh;
+    font-family: 'Rajdhani', sans-serif;
+    color: #f0f0f0;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .circuit-bg {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    opacity: 0.06;
+    background-image:
+      linear-gradient(#8B1A1A 1px, transparent 1px),
+      linear-gradient(90deg, #8B1A1A 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  .top-bar {
+    background: #8B1A1A;
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 2px solid #c0392b;
+    position: relative;
+    z-index: 2;
+    flex-wrap: wrap;
+  }
+
+  .top-bar-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #ff4444;
+    animation: blink 1.2s infinite;
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .top-bar-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: #ffd0d0;
+    letter-spacing: 2px;
+  }
+
+  .page-header {
+    text-align: center;
+    padding: 28px 24px 16px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .page-title {
+    font-size: 13px;
+    font-family: 'Share Tech Mono', monospace;
+    color: #8B1A1A;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .page-h1 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #fff;
+    text-transform: uppercase;
+  }
+
+  .stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin: 16px auto;
+    max-width: 600px;
+    position: relative;
+    z-index: 2;
+    padding: 0 24px;
+  }
+
+  .stat-box {
+    flex: 1;
+    background: #111;
+    border: 1px solid #2a0a0a;
+    border-top: 2px solid #8B1A1A;
+    border-radius: 2px;
+    padding: 12px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-size: 28px;
+    font-weight: 700;
+    color: #c0392b;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .stat-lbl {
+    font-size: 11px;
+    color: #555;
+    letter-spacing: 2px;
+    font-family: 'Share Tech Mono', monospace;
+    text-transform: uppercase;
+  }
+
+  .list-container {
+    max-width: 700px;
+    margin: 0 auto 40px;
+    padding: 0 24px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .list-header {
+    display: grid;
+    grid-template-columns: 48px 1fr 120px 80px;
+    padding: 8px 16px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #555;
+    border-bottom: 1px solid #1a0505;
+    text-transform: uppercase;
+  }
+
+  .participant-row {
+    display: grid;
+    grid-template-columns: 48px 1fr 120px 80px;
+    padding: 12px 16px;
+    background: #0d0d0d;
+    border: 1px solid #1a0505;
+    border-radius: 2px;
+    margin-bottom: 6px;
+    align-items: center;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .participant-row:hover {
+    background: #120505;
+    border-color: #3a0a0a;
+  }
+
+  .p-num {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: #8B1A1A;
+  }
+
+  .p-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #f0f0f0;
+    letter-spacing: 1px;
+  }
+
+  .p-course {
+    font-size: 13px;
+    color: #888;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .p-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 2px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    background: #1a3a1a;
+    color: #2ecc71;
+    border: 1px solid #2d6a2d;
+  }
+
+  .loading-text {
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+    color: #555;
+    font-size: 13px;
+    letter-spacing: 2px;
+    padding: 40px;
+    animation: blink 1.5s infinite;
+  }
+
+  .error-text {
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+    color: #c0392b;
+    font-size: 13px;
+    padding: 40px;
+    letter-spacing: 1px;
+  }
+
+  .back-link {
+    display: block;
+    text-align: center;
+    margin: 0 0 20px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: #8B1A1A;
+    letter-spacing: 2px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .back-link:hover { color: #c0392b; }
+
+  .refresh-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 auto 16px;
+    padding: 8px 20px;
+    background: transparent;
+    border: 1px solid #8B1A1A;
+    color: #8B1A1A;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .refresh-btn:hover { background: #8B1A1A; color: #fff; }
+
+  /* -------- Responsive -------- */
+  @media (max-width: 640px) {
+    .top-bar { padding: 10px 14px; gap: 8px; }
+    .top-bar-text { font-size: 11px; letter-spacing: 1.5px; }
+    .page-header { padding: 22px 14px 10px; }
+    .page-title { font-size: 11px; letter-spacing: 3px; }
+    .page-h1 { font-size: 24px; letter-spacing: 3px; }
+    .stats-row { flex-direction: column; gap: 10px; max-width: 100%; }
+    .stat-box { width: 100%; }
+    .list-container { padding: 0 14px; }
+    .list-header {
+      grid-template-columns: 36px 1fr;
+      grid-template-areas:
+        "num name";
+      gap: 6px;
+      font-size: 9px;
+    }
+    .list-header span:nth-child(1) { grid-area: num; }
+    .list-header span:nth-child(2) { grid-area: name; }
+    .list-header span:nth-child(3),
+    .list-header span:nth-child(4) { display: none; }
+
+    .participant-row {
+      grid-template-columns: 36px 1fr;
+      grid-template-areas:
+        "num name"
+        "num course"
+        "num status";
+      row-gap: 4px;
+      align-items: start;
+    }
+    .participant-row .p-num { grid-area: num; font-size: 11px; }
+    .participant-row .p-name { grid-area: name; font-size: 15px; }
+    .participant-row .p-course { grid-area: course; font-size: 12px; color: #bbb; }
+    .participant-row .p-badge { grid-area: status; width: fit-content; margin-top: 2px; }
+
+    .refresh-btn { width: 100%; justify-content: center; }
+    .back-link { margin-top: 4px; }
+  }
+</style>
+
+<div class="p-root">
+  <div class="circuit-bg"></div>
+
+  <div class="top-bar">
+    <div class="top-bar-dot"></div>
+    <span class="top-bar-text">CCS WEEK 2025 — APR 20–23 — BASILAN STATE COLLEGE</span>
+  </div>
+
+  <div class="page-header">
+    <div class="page-title">hack4gov / confirmed participants</div>
+    <div class="page-h1">Registered Players</div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="stat-num" id="count-total">—</div>
+      <div class="stat-lbl">Confirmed</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="count-date" style="font-size:18px;padding-top:4px;">APR 20</div>
+      <div class="stat-lbl">Event Start</div>
+    </div>
+  </div>
+
+  <div class="list-container">
+    <a class="back-link" href="/">← back to registration</a>
+
+    <button class="refresh-btn" onclick="loadParticipants()">⟳ &nbsp;REFRESH LIST</button>
+
+    <div class="list-header">
+      <span>#</span>
+      <span>Name</span>
+      <span>Course / Year</span>
+      <span>Status</span>
+    </div>
+
+    <div id="participant-list">
+      <div class="loading-text">[ LOADING PARTICIPANTS... ]</div>
+    </div>
+  </div>
+</div>
+
+<script>
+function loadParticipants() {
+  const list = document.getElementById('participant-list');
+  list.innerHTML = '<div class="loading-text">[ FETCHING DATA... ]</div>';
+
+  fetch('/api/participants')
+    .then(r => r.json())
+    .then(data => {
+      const participants = data.participants || [];
+      document.getElementById('count-total').textContent = participants.length;
+
+      if (participants.length === 0) {
+        list.innerHTML = '<div class="error-text">[ NO CONFIRMED PARTICIPANTS YET ]</div>';
+        return;
+      }
+
+      list.innerHTML = participants.map((p, i) => `
+        <div class="participant-row">
+          <span class="p-num">${String(i + 1).padStart(2, '0')}</span>
+          <span class="p-name">${escHtml(p.name)}</span>
+          <span class="p-course">${escHtml(p.course_year)}</span>
+          <span class="p-badge">CONFIRMED</span>
+        </div>
+      `).join('');
+    })
+    .catch(() => {
+      list.innerHTML = '<div class="error-text">[ ERROR: COULD NOT CONNECT TO SERVER ]</div>';
+    });
+}
+
+function escHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+loadParticipants();
+</script>

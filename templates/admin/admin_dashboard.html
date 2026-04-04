@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — Hack4Gov</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --text: #f0f0f0;
+      --muted: #555;
+      --muted-2: #444;
+      --accent: #8B1A1A;
+      --accent-strong: #c0392b;
+      --panel: #111;
+      --panel-2: #0d0d0d;
+      --border: #1a0505;
+      --border-subtle: #0f0505;
+      --header-bg: #111;
+      --hover: #120505;
+      --btn-border: #2a0a0a;
+      --btn-text: #c0392b;
+      --badge-confirm-bg: #1a3a1a;
+      --badge-confirm-text: #2ecc71;
+      --badge-confirm-border: #2d6a2d;
+      --badge-pending-bg: #1a1a0a;
+      --badge-pending-text: #f0ad00;
+      --badge-pending-border: #4a4010;
+      --flash-bg: #1a0505;
+      --flash-border: #5a1a1a;
+      --flash-text: #e74c3c;
+      --footer-text: #333;
+      --email: #555;
+      --topbar-text: #fff;
+      --topbar-subtext: #ffd0d0;
+    }
+
+    body.theme-light {
+      --bg: #f8f8f9;
+      --text: #1a1a1a;
+      --muted: #7a7a7a;
+      --muted-2: #8d8d8d;
+      --accent: #c53232;
+      --accent-strong: #e04a4a;
+      --panel: #ffffff;
+      --panel-2: #ffffff;
+      --border: #e4e4e4;
+      --border-subtle: #efefef;
+      --header-bg: #f4f4f6;
+      --hover: #fff4f4;
+      --btn-border: #d9d9d9;
+      --btn-text: #c53232;
+      --badge-confirm-bg: #e8f7ec;
+      --badge-confirm-text: #2a9955;
+      --badge-confirm-border: #b4e1c4;
+      --badge-pending-bg: #fff7df;
+      --badge-pending-text: #c78b00;
+      --badge-pending-border: #f0d9a2;
+      --flash-bg: #fff3f3;
+      --flash-border: #f1c4c4;
+      --flash-text: #c53232;
+      --footer-text: #666;
+      --email: #4a4a4a;
+      --topbar-text: #ffffff;
+      --topbar-subtext: #ffd7d7;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      font-family: 'Rajdhani', sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--accent) 1px, transparent 1px),
+        linear-gradient(90deg, var(--accent) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.05;
+      pointer-events: none;
+    }
+
+    /* ---- Top Bar ---- */
+    .topbar {
+      background: var(--accent);
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--accent-strong);
+      position: relative;
+      z-index: 10;
+    }
+
+    .topbar-left { display: flex; align-items: center; gap: 10px; }
+
+    .dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: #ff4444;
+      animation: blink 1.2s infinite;
+    }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .topbar-title {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 3px;
+      color: var(--topbar-text);
+    }
+
+    .topbar-right { display: flex; align-items: center; gap: 16px; }
+
+    .topbar-user {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      color: var(--topbar-subtext);
+      letter-spacing: 1px;
+    }
+
+    .btn-logout {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      padding: 4px 14px;
+      background: transparent;
+      border: 1px solid var(--topbar-text);
+      color: var(--topbar-text);
+      cursor: pointer;
+      border-radius: 2px;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-logout:hover { background: rgba(255,255,255,0.1); }
+
+    /* ---- Main Content ---- */
+    .content {
+      padding: 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ---- Stats ---- */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--accent);
+      border-radius: 2px;
+      padding: 16px;
+    }
+
+    .stat-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .stat-num {
+      font-size: 32px;
+      font-weight: 700;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    .stat-sub {
+      font-size: 11px;
+      color: var(--muted-2);
+      font-family: 'Share Tech Mono', monospace;
+      margin-top: 4px;
+    }
+
+    /* ---- Section Header ---- */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    /* ---- Buttons ---- */
+    .btn {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      padding: 7px 18px;
+      border-radius: 2px;
+      cursor: pointer;
+      border: 1px solid;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-export {
+      background: transparent;
+      border-color: var(--accent);
+      color: var(--accent-strong);
+    }
+    .btn-export:hover { background: var(--accent); color: #fff; }
+
+    .theme-toggle {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      padding: 4px 12px;
+      border-radius: 2px;
+      cursor: pointer;
+      border: 1px solid var(--topbar-text);
+      background: transparent;
+      color: var(--topbar-text);
+    }
+    .theme-toggle:hover { background: var(--hover); }
+
+    /* ---- Filter Buttons ---- */
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .filter-btn {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      padding: 5px 16px;
+      border-radius: 2px;
+      cursor: pointer;
+      border: 1px solid var(--btn-border);
+      background: transparent;
+      color: var(--muted);
+    }
+    .filter-btn:hover, .filter-btn.active {
+      border-color: var(--accent);
+      color: var(--accent-strong);
+      background: var(--hover);
+    }
+
+    /* ---- Table ---- */
+    .table-wrap {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      table-layout: fixed;
+      min-width: 700px;
+    }
+
+    thead { background: var(--header-bg); }
+
+    th {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: var(--muted);
+      padding: 11px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: var(--hover); }
+
+    .mono { font-family: 'Share Tech Mono', monospace; }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 2px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+    }
+
+    .badge-confirmed { background: var(--badge-confirm-bg); color: var(--badge-confirm-text); border: 1px solid var(--badge-confirm-border); }
+    .badge-pending   { background: var(--badge-pending-bg); color: var(--badge-pending-text); border: 1px solid var(--badge-pending-border); }
+
+    .table-footer {
+      text-align: right;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      color: var(--footer-text);
+      letter-spacing: 1px;
+      margin-top: 10px;
+    }
+
+    /* ---- Flash messages ---- */
+    .flash {
+      background: var(--flash-bg);
+      border: 1px solid var(--flash-border);
+      border-left: 3px solid var(--flash-text);
+      color: var(--flash-text);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px;
+      padding: 10px 14px;
+      border-radius: 2px;
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="dot"></div>
+      <span class="topbar-title">HACK4GOV // ADMIN PANEL</span>
+    </div>
+    <div class="topbar-right">
+      <!--
+        admin_user comes from render_template(..., admin_user=session.get('admin_username'))
+        Jinja2 uses {{ variable }} to display Python values in HTML
+      -->
+      <span class="topbar-user">LOGGED IN AS: {{ admin_user }}</span>
+      <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()">[ dark mode ]</button>
+      <a href="{{ url_for('admin_logout') }}" class="btn-logout">[ LOGOUT ]</a>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Flash messages (e.g., from login errors) -->
+    {% for msg in get_flashed_messages() %}
+      <div class="flash">> {{ msg }}</div>
+    {% endfor %}
+
+    <!-- Stats Cards -->
+    <!--
+      {{ total }}, {{ confirmed }}, {{ pending }}, {{ rate }}
+      are all variables passed from render_template() in app.py
+    -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Registered</div>
+        <div class="stat-num" style="color:var(--accent-strong);">{{ total }}</div>
+        <div class="stat-sub">all submissions</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Confirmed</div>
+        <div class="stat-num" style="color:#2ecc71;">{{ confirmed }}</div>
+        <div class="stat-sub">email verified</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pending</div>
+        <div class="stat-num" style="color:#f0ad00;">{{ pending }}</div>
+        <div class="stat-sub">awaiting email</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Confirm Rate</div>
+        <div class="stat-num" style="color:var(--muted-2);">{{ rate }}%</div>
+        <div class="stat-sub">of total</div>
+      </div>
+    </div>
+
+    <!-- Section Header -->
+    <div class="section-header">
+      <span class="section-title">registrations</span>
+      <!--
+        url_for('admin_export') → builds the URL for the /admin/export route
+        Clicking this link will download the CSV file
+      -->
+      <a href="{{ url_for('admin_export') }}" class="btn btn-export">[ export csv ]</a>
+    </div>
+
+    <!-- Filter Buttons (JavaScript handles the filtering below) -->
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="filterTable('all', this)">All ({{ total }})</button>
+      <button class="filter-btn" onclick="filterTable('confirmed', this)">Confirmed ({{ confirmed }})</button>
+      <button class="filter-btn" onclick="filterTable('pending', this)">Pending ({{ pending }})</button>
+    </div>
+
+    <!-- Registrations Table -->
+    <div class="table-wrap">
+      <table id="reg-table">
+        <thead>
+          <tr>
+            <th style="width:50px;">#</th>
+            <th style="width:22%;">Name</th>
+            <th style="width:16%;">Course / Year</th>
+            <th style="width:8%;">Age</th>
+            <th style="width:22%;">Email</th>
+            <th style="width:10%;">Status</th>
+            <th style="width:14%;">Registered At</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!--
+          {% raw %}
+            {% for %} ... {% endfor %} → Jinja2 loop
+            This loops over the `registrations` list passed from app.py
+            and creates one <tr> row per person.
+
+            registrations is a list of dicts, so we access values with
+            registration.name, registration.email, etc.
+          -->
+          {% endraw %}
+          {% for reg in registrations %}
+          <tr data-status="{{ 'confirmed' if reg.confirmed == 1 else 'pending' }}">
+
+            <td class="mono" style="color:var(--accent);">
+              {{ loop.index }}
+              <!--
+                loop.index → Jinja2 gives us this automatically inside a for loop
+                It's the current iteration number (1, 2, 3...)
+              -->
+            </td>
+
+            <td style="font-weight:600; color:var(--text);">{{ reg.name }}</td>
+
+            <td class="mono" style="color:var(--muted);">{{ reg.course_year }}</td>
+
+            <td class="mono" style="color:var(--muted);">{{ reg.age }}</td>
+
+            <td class="mono" style="color:var(--email); font-size:11px;">{{ reg.email }}</td>
+
+            <td>
+              <!--
+              {% raw %}
+                {% if %} ... {% else %} ... {% endif %} → Jinja2 conditional
+                Shows a green "confirmed" badge or yellow "pending" badge
+                depending on the value of reg.confirmed
+              -->
+              {% endraw %}
+              {% if reg.confirmed == 1 %}
+                <span class="badge badge-confirmed">confirmed</span>
+              {% else %}
+                <span class="badge badge-pending">pending</span>
+              {% endif %}
+            </td>
+
+            <td class="mono" style="color:var(--muted-2); font-size:11px;">
+              {{ reg.registered_at[:16] if reg.registered_at else '—' }}
+              <!--
+                reg.registered_at looks like: "2025-04-15 10:24:00"
+                [:16] slices just the first 16 characters → "2025-04-15 10:24"
+              -->
+            </td>
+
+          </tr>
+          {% else %}
+          <!--
+          {% raw %}
+            {% else %} on a for loop → runs if the list is empty
+          -->
+          {% endraw %}
+          <tr>
+            <td colspan="7" style="text-align:center; color:var(--muted-2); font-family:'Share Tech Mono',monospace;
+                                   font-size:12px; letter-spacing:2px; padding:30px;">
+              [ NO REGISTRATIONS YET ]
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-footer" id="table-footer">
+      showing {{ total }} entries
+    </div>
+
+  </div><!-- end .content -->
+
+  <script>
+    // Filter table rows by status without reloading the page
+    function filterTable(status, btn) {
+      // Update active button style
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Show/hide rows based on their data-status attribute
+      const rows = document.querySelectorAll('#reg-table tbody tr[data-status]');
+      let visible = 0;
+
+      rows.forEach(row => {
+        if (status === 'all' || row.dataset.status === status) {
+          row.style.display = '';
+          visible++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      // Update footer count
+      document.getElementById('table-footer').textContent =
+        `showing ${visible} of {{ total }} entries`;
+    }
+
+    // Theme toggle (dark / light)
+    const savedTheme = localStorage.getItem('admin-theme');
+    if (savedTheme === 'light') {
+      document.body.classList.add('theme-light');
+    }
+    updateThemeLabel();
+
+    function toggleTheme() {
+      const isLight = document.body.classList.toggle('theme-light');
+      localStorage.setItem('admin-theme', isLight ? 'light' : 'dark');
+      updateThemeLabel();
+    }
+
+    function updateThemeLabel() {
+      const btn = document.getElementById('theme-toggle');
+      if (btn) {
+        btn.textContent = document.body.classList.contains('theme-light')
+          ? '[ light mode ]'
+          : '[ dark mode ]';
+      }
+    }
+  </script>
+
+</body>
+</html>
