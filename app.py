@@ -68,6 +68,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS registrations (
             id             INTEGER PRIMARY KEY AUTOINCREMENT,
             name           TEXT    NOT NULL,
+            codename       TEXT,
             age            INTEGER NOT NULL,
             course_year    TEXT    NOT NULL,
             contact_number TEXT    NOT NULL,
@@ -77,6 +78,10 @@ def init_db():
             registered_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+    # Add codename column if migrating an existing DB
+    cols = {row[1] for row in conn.execute("PRAGMA table_info(registrations)")}
+    if 'codename' not in cols:
+        conn.execute("ALTER TABLE registrations ADD COLUMN codename TEXT;")
     conn.commit()
     conn.close()
 
@@ -163,6 +168,7 @@ def participants_page():
 def register():
     data           = request.get_json()
     name           = data.get('name', '').strip()
+    codename       = data.get('codename', '').strip()
     age            = data.get('age', '').strip()
     course_year    = data.get('course_year', '').strip()
     contact_number = data.get('contact_number', '').strip()
@@ -176,9 +182,9 @@ def register():
     conn = get_db()
     try:
         conn.execute("""
-            INSERT INTO registrations (name, age, course_year, contact_number, email, token)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, (name, age, course_year, contact_number, email, token))
+            INSERT INTO registrations (name, codename, age, course_year, contact_number, email, token)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (name, codename or None, age, course_year, contact_number, email, token))
         conn.commit()
     except sqlite3.IntegrityError:
         conn.close()
@@ -201,7 +207,7 @@ def get_participants():
     conn  = get_db()
     try:
         rows  = conn.execute("""
-            SELECT name, course_year FROM registrations
+            SELECT name, codename, course_year FROM registrations
             WHERE confirmed = 1 ORDER BY registered_at ASC
         """).fetchall()
     except Exception as e:
@@ -291,7 +297,7 @@ def admin_dashboard():
 
         # Get all registrations (both confirmed and pending)
         all_rows = conn.execute("""
-            SELECT id, name, age, course_year, contact_number,
+            SELECT id, name, codename, age, course_year, contact_number,
                    email, confirmed, registered_at
             FROM registrations
             ORDER BY registered_at DESC
@@ -341,10 +347,23 @@ def admin_dashboard():
 @app.route('/admin/export')
 @login_required
 def admin_export():
+    export_format = request.args.get('format', 'csv').lower()
+    fields_key    = request.args.get('fields', 'all').lower()
+
+    # Field presets
+    presets = {
+        'all':       ['name', 'codename', 'age', 'course_year', 'contact_number', 'email', 'status', 'registered_at'],
+        'all_name':  ['name'],
+        'all_codename': ['codename'],
+        'all_email': ['email'],
+        'all_contact': ['contact_number'],
+    }
+    columns = presets.get(fields_key, presets['all'])
+
     conn = get_db()
     try:
         rows = conn.execute("""
-            SELECT name, age, course_year, contact_number, email,
+            SELECT name, codename, age, course_year, contact_number, email,
                    CASE WHEN confirmed = 1 THEN 'Confirmed' ELSE 'Pending' END AS status,
                    registered_at
             FROM registrations
@@ -357,38 +376,43 @@ def admin_export():
     else:
         conn.close()
 
-    # Build the CSV in memory (no need to save a file on disk)
-    # io.StringIO() creates an in-memory text buffer (like a fake file)
+    # Build export
+    if export_format == 'html':
+        from flask import make_response
+        header_cells = ''.join(f'<th>{h.replace("_"," ").title()}</th>' for h in columns)
+        body_rows = []
+        for row in rows:
+            body_cells = []
+            for col in columns:
+                val = row[col] if col != 'codename' else (row[col] or '')
+                body_cells.append(f'<td>{val}</td>')
+            body_rows.append('<tr>' + ''.join(body_cells) + '</tr>')
+        html = f"""
+        <html><head><meta charset='UTF-8'><title>Hack4Gov Export</title>
+        <style>table{{border-collapse:collapse;font-family:monospace;font-size:13px;}}
+        th,td{{border:1px solid #ccc;padding:6px 10px;}}</style></head><body>
+        <h3>Hack4Gov Export ({fields_key})</h3>
+        <table><thead><tr>{header_cells}</tr></thead><tbody>{''.join(body_rows)}</tbody></table>
+        </body></html>
+        """
+        resp = make_response(html)
+        resp.headers['Content-Type'] = 'text/html'
+        resp.headers['Content-Disposition'] = f'attachment; filename=hack4gov_{fields_key}.html'
+        return resp
+
+    # default CSV
     output = io.StringIO()
     writer = csv.writer(output)
-
-    # Write the header row
-    writer.writerow(['Name', 'Age', 'Course/Year', 'Contact Number', 'Email', 'Status', 'Registered At'])
-
-    # Write one row per registration
+    writer.writerow([c.replace('_',' ').title() for c in columns])
     for row in rows:
-        writer.writerow([
-            row['name'],
-            row['age'],
-            row['course_year'],
-            row['contact_number'],
-            row['email'],
-            row['status'],
-            row['registered_at']
-        ])
+        writer.writerow([(row[col] if col != 'codename' else (row[col] or '')) for col in columns])
 
-    # Get the CSV string from the buffer
     csv_data = output.getvalue()
     output.close()
-
-    # Send the CSV as a downloadable file response
-    # make_response builds a custom HTTP response
     from flask import make_response
     response = make_response(csv_data)
     response.headers['Content-Type']        = 'text/csv'
-    response.headers['Content-Disposition'] = 'attachment; filename=hack4gov_registrations.csv'
-    # Content-Disposition: attachment → tells the browser to download it
-    # filename= → the default filename when saving
+    response.headers['Content-Disposition'] = f'attachment; filename=hack4gov_{fields_key}.csv'
     return response
 
 

@@ -401,7 +401,22 @@
         url_for('admin_export') → builds the URL for the /admin/export route
         Clicking this link will download the CSV file
       -->
-      <a href="{{ url_for('admin_export') }}" class="btn btn-export">[ export csv ]</a>
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <form id="export-form" action="{{ url_for('admin_export') }}" method="get" style="display:flex; gap:6px; align-items:center;">
+          <select name="fields" class="btn" style="padding:6px 10px; background:green; color:black; border-color:var(--border);">
+            <option value="all">all fields</option>
+            <option value="all_name">all_name</option>
+            <option value="all_codename">all_codename</option>
+            <option value="all_email">all_email</option>
+            <option value="all_contact">all_contact</option>
+          </select>
+          <select name="format" class="btn" style="padding:6px 10px; background:green; color:black; border-color:var(--border);">
+            <option value="csv">csv</option>
+            <option value="html">html</option>
+          </select>
+          <button type="submit" class="btn btn-export">[ export ]</button>
+        </form>
+      </div>
     </div>
 
     <!-- Filter Buttons (JavaScript handles the filtering below) -->
@@ -417,7 +432,8 @@
         <thead>
           <tr>
             <th style="width:50px;">#</th>
-            <th style="width:22%;">Name</th>
+            <th style="width:18%;">Name</th>
+            <th style="width:14%;">Codename</th>
             <th style="width:16%;">Course / Year</th>
             <th style="width:8%;">Age</th>
             <th style="width:22%;">Email</th>
@@ -448,6 +464,8 @@
             </td>
 
             <td style="font-weight:600; color:var(--text);">{{ reg.name }}</td>
+
+            <td class="mono" style="color:var(--muted);">{{ reg.codename or '—' }}</td>
 
             <td class="mono" style="color:var(--muted);">{{ reg.course_year }}</td>
 

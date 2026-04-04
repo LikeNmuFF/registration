@@ -122,7 +122,7 @@
 
   .list-header {
     display: grid;
-    grid-template-columns: 48px 1fr 120px 80px;
+    grid-template-columns: 48px 1fr 140px 80px;
     padding: 8px 16px;
     font-family: 'Share Tech Mono', monospace;
     font-size: 10px;
@@ -134,7 +134,7 @@
 
   .participant-row {
     display: grid;
-    grid-template-columns: 48px 1fr 120px 80px;
+    grid-template-columns: 48px 1fr 140px 80px;
     padding: 12px 16px;
     background: #0d0d0d;
     border: 1px solid #1a0505;
@@ -162,6 +162,14 @@
     letter-spacing: 1px;
   }
 
+  .p-codename {
+    display: block;
+    font-size: 12px;
+    color: #c0392b;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
   .p-course {
     font-size: 13px;
     color: #888;
@@ -230,6 +238,22 @@
   }
   .refresh-btn:hover { background: #8B1A1A; color: #fff; }
 
+  .footer {
+    position: relative;
+    z-index: 2;
+    padding: 14px 20px 24px;
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: #555;
+    letter-spacing: 1.5px;
+  }
+  .footer a {
+    color: #8B1A1A;
+    text-decoration: none;
+  }
+  .footer a:hover { color: #c0392b; }
+
   /* -------- Responsive -------- */
   @media (max-width: 640px) {
     .top-bar { padding: 10px 14px; gap: 8px; }
@@ -263,11 +287,13 @@
     }
     .participant-row .p-num { grid-area: num; font-size: 11px; }
     .participant-row .p-name { grid-area: name; font-size: 15px; }
+    .participant-row .p-codename { grid-area: name; font-size: 12px; color: #c0392b; margin-top: 0; }
     .participant-row .p-course { grid-area: course; font-size: 12px; color: #bbb; }
     .participant-row .p-badge { grid-area: status; width: fit-content; margin-top: 2px; }
 
     .refresh-btn { width: 100%; justify-content: center; }
     .back-link { margin-top: 4px; }
+    .footer { font-size: 10px; padding: 12px 10px 18px; }
   }
 </style>
 
@@ -313,6 +339,10 @@
   </div>
 </div>
 
+<div class="footer" hidden>
+  Built for CCS Week 2026 · <a href="/">Back to registration</a> · Hack4Gov
+</div>
+
 <script>
 function loadParticipants() {
   const list = document.getElementById('participant-list');
@@ -332,7 +362,7 @@ function loadParticipants() {
       list.innerHTML = participants.map((p, i) => `
         <div class="participant-row">
           <span class="p-num">${String(i + 1).padStart(2, '0')}</span>
-          <span class="p-name">${escHtml(p.name)}</span>
+          <span class="p-name">${escHtml(p.name)}${p.codename ? `<span class="p-codename">${escHtml(p.codename)}</span>` : ''}</span>
           <span class="p-course">${escHtml(p.course_year)}</span>
           <span class="p-badge">CONFIRMED</span>
         </div>
