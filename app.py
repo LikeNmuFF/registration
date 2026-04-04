@@ -86,7 +86,7 @@ def init_db():
 # ============================================================
 EMAIL_SENDER   = 'kleia6678@gmail.com'   # TODO: your Gmail
 EMAIL_PASSWORD = 'smwqemlpykznlvxh'      # TODO: Gmail App Password
-BASE_URL       = 'http://localhost:5000'  # TODO: change when deploying
+BASE_URL       = 'https://hack4gov.pythonanywhere.com'  # TODO: change when deploying
 
 def send_confirmation_email(to_email, name, token):
     confirm_url = f"{BASE_URL}/confirm/{token}"
@@ -399,5 +399,5 @@ with app.app_context():
     init_db()
 
 if __name__ == '__main__':
-    app.run(debug=True, port="5000")
+    app.run(debug=False)
     # TODO: set debug=False before deploying to PythonAnywhere!
