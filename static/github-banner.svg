@@ -1,15 +1,42 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   viewBox="0 0 640000 48400"
+   viewBox="0 0 802 220"
    role="img"
    aria-labelledby="title desc"
    version="1.1"
    id="svg16"
-   width="640000"
-   height="48400"
+   sodipodi:docname="github-banner.svg"
+   inkscape:export-filename="github-banner.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   width="802"
+   height="220"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     id="namedview16"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1">
+    <inkscape:page
+       x="0"
+       y="0"
+       width="802"
+       height="220"
+       id="page2"
+       margin="0"
+       bleed="0" />
+  </sodipodi:namedview>
   <title
      id="title">Hack4Gov Animated Banner</title>
   <desc
@@ -17,16 +44,34 @@
   <defs
      id="defs4">
     <pattern
+       inkscape:collect="always"
        xlink:href="#grid"
-       id="pattern2"
-       patternTransform="scale(1)" />
+       id="pattern18"
+       patternTransform="translate(-3.6573183e-6,5.3392669)" />
+    <inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect18"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1"
+       radius="0"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="false" />
     <linearGradient
        id="bg"
        x1="0"
        x2="0"
        y1="0"
        y2="419.52353"
-       gradientTransform="scale(1.9069252,0.52440442)"
+       gradientTransform="matrix(1.9069252,0,0,0.52440442,-3.6573183e-6,5.3392669)"
        gradientUnits="userSpaceOnUse">
       <stop
          offset="0%"
@@ -65,6 +110,7 @@
          id="path4" />
     </pattern>
     <linearGradient
+       inkscape:collect="always"
        xlink:href="#accent"
        id="linearGradient16"
        x1="-0.35921061"
@@ -74,6 +120,7 @@
        gradientTransform="scale(5.5677644,0.1796053)"
        gradientUnits="userSpaceOnUse" />
     <linearGradient
+       inkscape:collect="always"
        xlink:href="#accent"
        id="linearGradient17"
        x1="-209.76176"
@@ -83,16 +130,18 @@
        gradientTransform="matrix(0.6844606,0,0,0.68715058,182.60565,37.444652)"
        gradientUnits="userSpaceOnUse" />
     <linearGradient
+       inkscape:collect="always"
        xlink:href="#accent"
-       id="linearGradient2"
+       id="linearGradient18"
        x1="-11"
        y1="-11"
        x2="111"
        y2="-11"
        gradientUnits="userSpaceOnUse" />
     <linearGradient
+       inkscape:collect="always"
        xlink:href="#accent"
-       id="linearGradient3"
+       id="linearGradient19"
        x1="-0.37115374"
        y1="187.92751"
        x2="11.753202"
@@ -105,18 +154,18 @@
      height="220"
      fill="url(#bg)"
      id="rect4"
-     x="0"
-     y="0"
-     style="fill:url(#bg)" />
+     style="fill:url(#bg)"
+     x="-8.4725968e-07"
+     y="5.3392715" />
   <rect
      width="800"
      height="220"
      fill="url(#grid)"
      opacity="0.6"
      id="rect5"
-     x="0"
-     y="0"
-     style="fill:url(#pattern2)" />
+     style="fill:url(#pattern18)"
+     x="-8.4725968e-07"
+     y="5.3392715" />
   <!-- Moving scanline -->
   <path
      id="scan"
@@ -127,8 +176,11 @@
      fill="url(#accent)"
      opacity="0.18"
      style="fill:url(#linearGradient17);stroke-width:0.685804"
+     sodipodi:type="rect"
+     inkscape:path-effect="#path-effect18"
      d="M 61.331989,37.444653 H 159.306 c 12.3542,0 22.3,9.945799 22.3,22.299999 v 99.537928 c 0,12.3542 -9.9458,22.3 -22.3,22.3 H 61.331989 c -12.354199,0 -22.299999,-9.9458 -22.299999,-22.3 V 59.744652 c 0,-12.3542 9.9458,-22.299999 22.299999,-22.299999 z"
-     rx="22.299999">
+     rx="22.299999"
+     transform="translate(-3.6573183e-6,5.3392669)">
     <animate
        attributeName="x"
        from="-200"
@@ -138,7 +190,7 @@
   </path>
   <!-- Left side badge -->
   <g
-     transform="translate(60,60)"
+     transform="translate(60,65.339267)"
      id="g12">
     <rect
        x="-10"
@@ -150,7 +202,7 @@
        stroke="url(#accent)"
        stroke-width="2"
        id="rect6"
-       style="stroke:url(#linearGradient2)" />
+       style="stroke:url(#linearGradient18)" />
     <g
        transform="translate(10,10)"
        id="g11">
@@ -203,7 +255,7 @@
          stroke-width="3"
          stroke-linecap="round"
          id="path9"
-         style="stroke:url(#linearGradient3)">
+         style="stroke:url(#linearGradient19)">
         <animate
            attributeName="stroke-dasharray"
            from="0 80"
@@ -241,7 +293,7 @@
   </g>
   <!-- Title + subtitle -->
   <g
-     transform="translate(210,86)"
+     transform="translate(210,91.339267)"
      id="g13">
     <text
        x="0"
@@ -265,7 +317,7 @@
   </g>
   <!-- Animated underline -->
   <g
-     transform="matrix(1.4161002,0,0,1,208.16257,132.35261)"
+     transform="matrix(1.4161002,0,0,1,208.16257,137.69188)"
      id="g14">
     <line
        x1="0"
@@ -295,7 +347,7 @@
   </g>
   <!-- Orbiting dot -->
   <g
-     transform="translate(658.24249,131.35706)"
+     transform="translate(658.24249,136.69633)"
      id="g15">
     <circle
        cx="0"
@@ -323,7 +375,7 @@
   </g>
   <path
      id="orbit-path"
-     d="m 594,110 a 46,46 0 1 0 92,0 46,46 0 1 0 -92,0"
+     d="m 594,115.33927 a 46,46 0 1 0 92,0 46,46 0 1 0 -92,0"
      fill="none" />
   <!-- Footer ticks -->
   <g
@@ -332,7 +384,7 @@
      font-size="10px"
      letter-spacing="2"
      id="g16"
-     transform="translate(17.114572,1.7797553)"
+     transform="translate(17.114572,7.1190169)"
      style="fill:#ffffff;fill-opacity:1">
     <text
        x="20"
@@ -345,4 +397,13 @@
        id="text16"
        style="fill:#ffffff;fill-opacity:1">APR 21 – 23</text>
   </g>
+  <metadata
+     id="metadata19">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>Hack4Gov Animated Banner</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
 </svg>
