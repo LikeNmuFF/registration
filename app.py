@@ -1,8 +1,4 @@
-# ============================================================
-#  HACK4GOV - CCS WEEK 2025 | Basilan State College
-#  Flask Backend - app.py  (with Admin Dashboard)
-# ============================================================
-
+import os
 from flask import (
     Flask, request, jsonify,
     redirect, url_for,
@@ -28,24 +24,11 @@ from functools import wraps
 
 app = Flask(__name__)
 
-# ============================================================
-#  SECRET KEY — required for session to work
-#  session uses a cookie, and this key signs/encrypts it.
-#  Change this to any long random string before deploying!
-# ============================================================
-app.secret_key = 'change-this-to-something-random-before-deploying'
-# TODO: replace with something like: 'h4ck4g0v_ccs_bsc_2025_super_secret'
 
+app.secret_key = os.getenv('secret_key')
 
-# ============================================================
-#  ADMIN CREDENTIALS
-#  Hardcoded here for simplicity. Keep this file private!
-#  TODO: you can move these to environment variables later.
-# ============================================================
-ADMIN_USERNAME = 'admin'
-ADMIN_PASSWORD = 'hack4gov2026'   # TODO: change this password!
-
-
+ADMIN_USERNAME = os.getenv('ADMIN_USERNAME')
+ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
 # ============================================================
 #  DATABASE SETUP  (same as before)
 # ============================================================
@@ -89,9 +72,9 @@ def init_db():
 # ============================================================
 #  EMAIL SETUP  (same as before)
 # ============================================================
-EMAIL_SENDER   = 'kleia6678@gmail.com'   # TODO: your Gmail
-EMAIL_PASSWORD = 'smwqemlpykznlvxh'      # TODO: Gmail App Password
-BASE_URL       = 'https://hack4gov.pythonanywhere.com'  # TODO: change when deploying
+EMAIL_SENDER   = os.getenv('EMAIL_SENDER')
+EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')     
+BASE_URL       = 'https://hack4gov.pythonanywhere.com' 
 
 def send_confirmation_email(to_email, name, token):
     confirm_url = f"{BASE_URL}/confirm/{token}"
@@ -424,4 +407,4 @@ with app.app_context():
 
 if __name__ == '__main__':
     app.run(debug=False)
-    # TODO: set debug=False before deploying to PythonAnywhere!
+    
