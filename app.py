@@ -19,12 +19,14 @@ import os
 import csv
 import io
 from functools import wraps
-from flask_dotenv import DotEnv
+from dotenv import load_dotenv
 # csv, io      → used to build the CSV export file in memory
 # functools    → used to build the login_required decorator (explained below)
 
 app = Flask(__name__)
 
+# Load .env file explicitly (required for PythonAnywhere / local dev)
+load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 
 app.secret_key = os.getenv('SECRET_KEY', secrets.token_urlsafe(16))  # Used to secure sessions and flash messages
 
@@ -104,7 +106,14 @@ def send_confirmation_email(to_email, name, token):
             server.starttls()
             server.login(EMAIL_SENDER, EMAIL_PASSWORD)
             server.sendmail(EMAIL_SENDER, to_email, msg.as_string())
+        print(f"Email sent successfully to {to_email}")
         return True
+    except smtplib.SMTPAuthenticationError as e:
+        print(f"Email AUTH error (check EMAIL_SENDER/EMAIL_PASSWORD): {e}")
+        return False
+    except smtplib.SMTPException as e:
+        print(f"Email SMTP error: {e}")
+        return False
     except Exception as e:
         print(f"Email error: {e}")
         return False

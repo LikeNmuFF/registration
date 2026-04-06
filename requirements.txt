@@ -7,3 +7,4 @@
 # but it's good practice to list it anyway.
 
 flask
+python-dotenv
