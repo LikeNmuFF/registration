@@ -28,8 +28,8 @@ app = Flask(__name__)
 
 app.secret_key = os.getenv('SECRET_KEY', secrets.token_urlsafe(16))  # Used to secure sessions and flash messages
 
-ADMIN_USERNAME = os.getenv('ADMIN_USERNAME')
-ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
+ADMIN_USERNAME = os.getenv('ADMIN_USERNAME', 'admin')
+ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'hack4gov2026')
 # ============================================================
 #  DATABASE SETUP 
 # ============================================================
