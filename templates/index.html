@@ -321,14 +321,25 @@
       <input class="form-input" id="f-codename" type="text" placeholder="e.g. nightowl" />
     </div>
 
+    <div class="form-group">
+      <label class="form-label">Course <span>*</span></label>
+      <input class="form-input" id="f-course" type="text" placeholder="e.g. BSCS" />
+    </div>
+
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">Age <span>*</span></label>
         <input class="form-input" id="f-age" type="number" placeholder="e.g. 20" min="15" max="99" />
       </div>
       <div class="form-group">
-        <label class="form-label">Course &amp; Year <span>*</span></label>
-        <input class="form-input" id="f-course" type="text" placeholder="e.g. BSCS 3" />
+        <label class="form-label">Year <span>*</span></label>
+        <select class="form-input" id="f-year">
+          <option value="">Select Year</option>
+          <option value="1st Year">1st Year</option>
+          <option value="2nd Year">2nd Year</option>
+          <option value="3rd Year">3rd Year</option>
+          <option value="4th Year">4th Year</option>
+        </select>
       </div>
     </div>
 
@@ -382,10 +393,11 @@ function handleSubmit() {
   const age = document.getElementById('f-age').value.trim();
   const codename = document.getElementById('f-codename').value.trim();
   const course = document.getElementById('f-course').value.trim();
+  const year = document.getElementById('f-year').value.trim();
   const contact = document.getElementById('f-contact').value.trim();
   const email = document.getElementById('f-email').value.trim();
 
-  if (!name || !age || !course || !contact || !email) {
+  if (!name || !age || !course || !year || !contact || !email) {
     showToast('> ERROR: All fields are required.', true); return;
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -399,7 +411,7 @@ function handleSubmit() {
   fetch('/api/register', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, codename, age, course_year: course, contact_number: contact, email })
+    body: JSON.stringify({ name, codename, age, course_year: `${course} ${year}`, contact_number: contact, email })
   })
   .then(r => r.json())
   .then(data => {

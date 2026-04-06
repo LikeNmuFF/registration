@@ -30,7 +30,7 @@ app.secret_key = os.getenv('secret_key')
 ADMIN_USERNAME = os.getenv('ADMIN_USERNAME')
 ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
 # ============================================================
-#  DATABASE SETUP  (same as before)
+#  DATABASE SETUP 
 # ============================================================
 DB_PATH = os.path.join(os.path.dirname(__file__), 'hack4gov.db')
 
@@ -44,7 +44,7 @@ def get_db():
 
 def init_db():
     conn = get_db()
-    conn.execute("PRAGMA journal_mode = WAL;")      # better read/write concurrency
+    conn.execute("PRAGMA journal_mode = WAL;")
     conn.execute("PRAGMA synchronous = NORMAL;")    # safer default for WAL in web use
     conn.execute("PRAGMA busy_timeout = 30000;")
     conn.execute("""
@@ -70,7 +70,7 @@ def init_db():
 
 
 # ============================================================
-#  EMAIL SETUP  (same as before)
+#  EMAIL SETUP 
 # ============================================================
 EMAIL_SENDER   = os.getenv('EMAIL_SENDER')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')     
