@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 — FLAG NOT FOUND | Hack4Gov CTF</title>
+    <link rel="icon" type="png/x-icon" href="{{ url_for('static', filename='logo.png')}}">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #0a0a0a;
+            min-height: 100vh;
+            font-family: 'Rajdhani', sans-serif;
+            color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .circuit-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0.06;
+            background-image:
+                linear-gradient(#8B1A1A 1px, transparent 1px),
+                linear-gradient(90deg, #8B1A1A 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #8B1A1A, transparent);
+            animation: scan 3s linear infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes scan {
+            0% { top: -2px; }
+            100% { top: 100vh; }
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px 24px;
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+        }
+
+        .error-code {
+            font-size: 120px;
+            font-weight: 700;
+            color: #8B1A1A;
+            letter-spacing: 8px;
+            line-height: 1;
+            position: relative;
+            animation: glitch 2s infinite;
+            text-shadow: 2px 2px 0 #ff4444, -2px -2px 0 #5a0f0f;
+        }
+
+        @keyframes glitch {
+            0%, 90%, 100% { 
+                transform: translate(0);
+                text-shadow: 2px 2px 0 #ff4444, -2px -2px 0 #5a0f0f;
+            }
+            92% { 
+                transform: translate(-2px, 1px);
+                text-shadow: -2px 2px 0 #ff4444, 2px -2px 0 #5a0f0f;
+            }
+            94% { 
+                transform: translate(2px, -1px);
+                text-shadow: 2px -2px 0 #ff4444, -2px 2px 0 #5a0f0f;
+            }
+            96% { 
+                transform: translate(-1px, -1px);
+                text-shadow: -2px -2px 0 #ff4444, 2px 2px 0 #5a0f0f;
+            }
+            98% { 
+                transform: translate(1px, 2px);
+                text-shadow: 2px 2px 0 #ff4444, -2px -2px 0 #5a0f0f;
+            }
+        }
+
+        .terminal-box {
+            background: #111;
+            border: 1px solid #2a0a0a;
+            border-top: 3px solid #8B1A1A;
+            border-radius: 4px;
+            padding: 32px;
+            margin-top: 32px;
+            position: relative;
+        }
+
+        .terminal-box::before {
+            content: 'SYSTEM.ERROR';
+            position: absolute;
+            top: -1px; left: 20px;
+            background: #8B1A1A;
+            color: #fff;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            padding: 2px 10px;
+            border-radius: 0 0 4px 4px;
+        }
+
+        .terminal-text {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 14px;
+            color: #A0A0A0;
+            letter-spacing: 2px;
+            line-height: 1.8;
+            text-align: left;
+        }
+
+        .terminal-text .prompt {
+            color: #8B1A1A;
+        }
+
+        .terminal-text .response {
+            color: #ff4444;
+        }
+
+        .terminal-text .hint {
+            color: #2ecc71;
+        }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 10px;
+            height: 16px;
+            background: #8B1A1A;
+            margin-left: 4px;
+            animation: blink-cursor 1s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink-cursor {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .flag-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .home-btn {
+            display: inline-block;
+            margin-top: 32px;
+            padding: 14px 32px;
+            background: #8B1A1A;
+            border: none;
+            border-bottom: 3px solid #5a0f0f;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: background 0.15s, transform 0.1s;
+        }
+
+        .home-btn:hover { background: #a52020; }
+        .home-btn:active { transform: translateY(2px); border-bottom-width: 1px; }
+
+        .corner-tl, .corner-br {
+            position: fixed;
+            width: 40px; height: 40px;
+        }
+        .corner-tl { top: 20px; left: 20px; border-top: 2px solid #8B1A1A; border-left: 2px solid #8B1A1A; }
+        .corner-br { bottom: 20px; right: 20px; border-bottom: 2px solid #8B1A1A; border-right: 2px solid #8B1A1A; }
+        .corner-bl { bottom: 20px; left: 20px; border-bottom: 2px solid #8B1A1A; border-left: 2px solid #8B1A1A; }
+        .corner-tr { top: 20px; right: 20px; border-top: 2px solid #8B1A1A; border-right: 2px solid #8B1A1A; }
+
+        @media (max-width: 640px) {
+            .error-code { font-size: 80px; letter-spacing: 4px; }
+            .terminal-box { padding: 24px 16px; margin: 20px 12px; }
+            .terminal-text { font-size: 12px; letter-spacing: 1px; }
+            .home-btn { font-size: 14px; padding: 12px 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="circuit-bg"></div>
+    <div class="scan-line"></div>
+    
+    <div class="corner-tl"></div>
+    <div class="corner-tr"></div>
+    <div class="corner-bl"></div>
+    <div class="corner-br"></div>
+
+    <div class="container">
+        <div class="flag-icon">🚩</div>
+        <div class="error-code">404</div>
+        
+        <div class="terminal-box">
+            <div class="terminal-text">
+                <span class="prompt">$</span> <span class="response">cat /var/log/error.log</span><br>
+                <span class="prompt">></span> ERROR: Flag not found at this location<br>
+                <span class="prompt">></span> STATUS: Page does not exist in database<br>
+                <br>
+                <span class="prompt">$</span> <span class="response">whoami</span><br>
+                <span class="prompt">></span> LOST_HACKER — You've wandered off the grid<br>
+                <br>
+                <span class="hint">💡 Hint: The flag you're looking for isn't here. Try going back to base.</span><span class="typing-cursor"></span>
+            </div>
+        </div>
+
+        <a href="{{ url_for('index') }}" class="home-btn">[ RETURN TO BASE ]</a>
+    </div>
+</body>
+</html>

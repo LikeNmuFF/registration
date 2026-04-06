@@ -19,13 +19,14 @@ import os
 import csv
 import io
 from functools import wraps
+from flask_dotenv import DotEnv
 # csv, io      → used to build the CSV export file in memory
 # functools    → used to build the login_required decorator (explained below)
 
 app = Flask(__name__)
 
 
-app.secret_key = os.getenv('secret_key')
+app.secret_key = os.getenv('SECRET_KEY', secrets.token_urlsafe(16))  # Used to secure sessions and flash messages
 
 ADMIN_USERNAME = os.getenv('ADMIN_USERNAME')
 ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
@@ -230,6 +231,7 @@ def confirm_email(token):
 #  ADMIN LOGIN  —  GET /admin/login   shows the login form
 #                  POST /admin/login  processes the form
 # ------------------------------------------------------------
+
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
 
@@ -400,11 +402,24 @@ def admin_export():
 
 
 # ============================================================
+#  ERROR HANDLERS
+# ============================================================
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
+
+
+# ============================================================
 #  INITIALIZE DB + RUN
 # ============================================================
 with app.app_context():
     init_db()
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
     

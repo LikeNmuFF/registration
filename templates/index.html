@@ -267,6 +267,95 @@
   }
   .footer a:hover { color: #c0392b; }
 
+  .closed-message {
+    display: none;
+    text-align: center;
+    padding: 40px 32px;
+  }
+
+  .closed-message h2 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #8B1A1A;
+    margin-bottom: 12px;
+  }
+
+  .closed-message p {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: #A0A0A0;
+    letter-spacing: 2px;
+    line-height: 1.6;
+  }
+
+  .closed-message .slots-info {
+    margin-top: 16px;
+    padding: 12px;
+    background: #0a0a0a;
+    border: 1px solid #2a0a0a;
+    border-left: 3px solid #8B1A1A;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    color: #c0392b;
+    letter-spacing: 2px;
+  }
+
+  .slots-counter {
+    margin-top: 16px;
+    padding: 12px;
+    background: #0a0a0a;
+    border: 1px solid #2a0a0a;
+    border-left: 3px solid #8B1A1A;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    color: #A0A0A0;
+    letter-spacing: 2px;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .slots-counter .slots-number {
+    font-size: 24px;
+    font-weight: 700;
+    color: #8B1A1A;
+    margin: 0 4px;
+    display: inline-block;
+  }
+
+  .slots-counter.critical {
+    border-left-color: #ff4444;
+    background: #1a0505;
+    animation: pulse-border 1.5s infinite;
+  }
+
+  .slots-counter.critical .slots-number {
+    color: #ff4444;
+    animation: pulse-text 1.5s infinite;
+  }
+
+  @keyframes pulse-border {
+    0%, 100% {
+      border-left-color: #ff4444;
+      background: #1a0505;
+    }
+    50% {
+      border-left-color: #ff8888;
+      background: #2a0a0a;
+    }
+  }
+
+  @keyframes pulse-text {
+    0%, 100% {
+      color: #ff4444;
+      text-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+    }
+    50% {
+      color: #ff8888;
+      text-shadow: 0 0 20px rgba(255, 68, 68, 0.8);
+    }
+  }
+
   /* -------- Responsive -------- */
   @media (max-width: 640px) {
     .hack-root { padding-bottom: 40px; }
@@ -311,55 +400,73 @@
     <div class="corner-tl"></div>
     <div class="corner-br"></div>
 
-    <div class="form-group">
-      <label class="form-label">Full Name <span>*</span></label>
-      <input class="form-input" id="f-name" type="text" placeholder="e.g. Juan Dela Cruz" />
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Codename <span style="color:#555">(optional)</span></label>
-      <input class="form-input" id="f-codename" type="text" placeholder="e.g. nightowl" />
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Course <span>*</span></label>
-      <input class="form-input" id="f-course" type="text" placeholder="e.g. BSCS" />
-    </div>
-
-    <div class="form-row">
+    <div id="registration-form">
       <div class="form-group">
-        <label class="form-label">Age <span>*</span></label>
-        <input class="form-input" id="f-age" type="number" placeholder="e.g. 20" min="15" max="99" />
+        <label class="form-label">Full Name <span>*</span></label>
+        <input class="form-input" id="f-name" type="text" placeholder="e.g. Juan Dela Cruz" />
       </div>
+
       <div class="form-group">
-        <label class="form-label">Year <span>*</span></label>
-        <select class="form-input" id="f-year">
-          <option value="">Select Year</option>
-          <option value="1st Year">1st Year</option>
-          <option value="2nd Year">2nd Year</option>
-          <option value="3rd Year">3rd Year</option>
-          <option value="4th Year">4th Year</option>
-        </select>
+        <label class="form-label">Codename <span style="color:#555">(optional)</span></label>
+        <input class="form-input" id="f-codename" type="text" placeholder="e.g. nightowl" />
       </div>
+
+      <div class="form-group">
+        <label class="form-label">Course <span>*</span></label>
+        <input class="form-input" id="f-course" type="text" placeholder="e.g. BSCS" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Age <span>*</span></label>
+          <input class="form-input" id="f-age" type="number" placeholder="e.g. 20" min="15" max="99" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Year <span>*</span></label>
+          <select class="form-input" id="f-year">
+            <option value="">Select Year</option>
+            <option value="1st Year">1st Year</option>
+            <option value="2nd Year">2nd Year</option>
+            <option value="3rd Year">3rd Year</option>
+            <option value="4th Year">4th Year</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Contact Number <span>*</span></label>
+        <input class="form-input" id="f-contact" type="tel" placeholder="e.g. 09XXXXXXXXX" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email Address <span>*</span></label>
+        <input class="form-input" id="f-email" type="email" placeholder="e.g. juan@email.com" />
+      </div>
+
+      <button class="submit-btn" onclick="handleSubmit()">[ REGISTER NOW ]</button>
+
+      <div class="slots-counter" id="slots-counter">
+        <span>SLOTS LEFT: </span>
+        <span class="slots-number" id="slots-number">19</span>
+        <span> / </span>
+        <span id="slots-total">19</span>
+      </div>
+
+      <p class="notice">
+        A confirmation link will be sent to your email. &nbsp;|&nbsp;
+        <a href="/participants">View confirmed participants →</a>
+      </p>
     </div>
 
-    <div class="form-group">
-      <label class="form-label">Contact Number <span>*</span></label>
-      <input class="form-input" id="f-contact" type="tel" placeholder="e.g. 09XXXXXXXXX" />
+    <div class="closed-message" id="closed-message">
+      <h2>REGISTRATION CLOSED</h2>
+      <p>Maximum number of participants reached.</p>
+      <div class="slots-info" id="slots-info"></div>
+      <p style="margin-top: 20px;">
+        <a href="/participants" style="color: #8B1A1A; text-decoration: none;">View confirmed participants →</a>
+      </p>
     </div>
 
-    <div class="form-group">
-      <label class="form-label">Email Address <span>*</span></label>
-      <input class="form-input" id="f-email" type="email" placeholder="e.g. juan@email.com" />
-    </div>
-
-    <button class="submit-btn" onclick="handleSubmit()">[ REGISTER NOW ]</button>
-
-    <p class="notice">
-      A confirmation link will be sent to your email. &nbsp;|&nbsp;
-      <a href="/participants">View confirmed participants →</a>
-    </p>
-    
   </div>
 </div>
 
@@ -386,6 +493,52 @@ function showToast(msg, isError) {
     t.style.borderColor = '#2d6a2d';
   }
   setTimeout(() => t.style.display = 'none', 4000);
+}
+
+function checkRegistrationStatus() {
+  fetch('/api/registration-status')
+    .then(r => r.json())
+    .then(data => {
+      const maxSlots = data.max_participants || STARTING_SLOTS;
+      const slotsLeft = maxSlots - data.confirmed_count;
+
+      renderSlots(slotsLeft, maxSlots);
+      
+      if (!data.is_open) {
+        // Registration is closed
+        document.getElementById('registration-form').style.display = 'none';
+        document.getElementById('closed-message').style.display = 'block';
+        document.getElementById('slots-info').textContent =
+          `SLOTS FILLED: ${data.confirmed_count}/${data.max_participants}`;
+      }
+    })
+    .catch(err => {
+      console.error('Failed to check registration status:', err);
+    });
+}
+
+// Check status when page loads
+document.addEventListener('DOMContentLoaded', () => {
+  renderSlots(STARTING_SLOTS, STARTING_SLOTS);
+  checkRegistrationStatus();
+});
+
+// Slot display helpers
+const STARTING_SLOTS = 19;
+function renderSlots(slotsLeft, totalSlots) {
+  const counter = document.getElementById('slots-counter');
+  const numEl = document.getElementById('slots-number');
+  const totalEl = document.getElementById('slots-total');
+
+  numEl.textContent = Math.max(slotsLeft, 0);
+  totalEl.textContent = totalSlots;
+
+  // Toggle critical animation when 5 or fewer slots remain
+  if (slotsLeft <= 5 && slotsLeft > 0) {
+    counter.classList.add('critical');
+  } else {
+    counter.classList.remove('critical');
+  }
 }
 
 function handleSubmit() {
@@ -418,6 +571,8 @@ function handleSubmit() {
     if (data.success) {
       showToast('> SUCCESS: Check your email to confirm registration!', false);
       document.querySelectorAll('.form-input').forEach(i => i.value = '');
+      // Check status again in case this was the last slot
+      checkRegistrationStatus();
     } else {
       showToast('> ERROR: ' + (data.message || 'Registration failed.'), true);
     }
