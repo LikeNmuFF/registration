@@ -334,6 +334,98 @@
     animation: pulse-text 1.5s infinite;
   }
 
+  .slots-counter.locked {
+    border-left-color: #ff0000;
+    background: #2a0000;
+    animation: lock-flash 0.6s ease;
+  }
+
+  .slots-counter.locked .slots-number {
+    color: #ff0000;
+    text-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+  }
+
+  @keyframes lock-flash {
+    0% { 
+      transform: scale(1);
+      background: #0a0a0a;
+    }
+    20% { 
+      transform: scale(1.05);
+      background: #ff0000;
+      box-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
+    }
+    40% { 
+      transform: scale(0.98);
+      background: #8B1A1A;
+    }
+    60% { 
+      transform: scale(1.02);
+      background: #5a0a0a;
+    }
+    100% { 
+      transform: scale(1);
+      background: #2a0000;
+    }
+  }
+
+  @keyframes lock-icon {
+    0% { 
+      transform: scale(0) rotate(-180deg);
+      opacity: 0;
+    }
+    60% { 
+      transform: scale(1.2) rotate(10deg);
+      opacity: 1;
+    }
+    80% { 
+      transform: scale(0.9) rotate(-5deg);
+    }
+    100% { 
+      transform: scale(1) rotate(0deg);
+      opacity: 1;
+    }
+  }
+
+  .lock-overlay {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(10, 10, 10, 0.95);
+    z-index: 10;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    border-radius: 4px;
+  }
+
+  .lock-overlay.active {
+    display: flex;
+    animation: fade-in 0.3s ease;
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .lock-icon-big {
+    font-size: 64px;
+    animation: lock-icon 0.6s ease;
+    margin-bottom: 16px;
+  }
+
+  .lock-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 16px;
+    color: #ff0000;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+
   @keyframes pulse-border {
     0%, 100% {
       border-left-color: #ff4444;
@@ -401,6 +493,11 @@
     <div class="corner-br"></div>
 
     <div id="registration-form">
+      <div class="lock-overlay" id="lock-overlay">
+        <div class="lock-icon-big">🔒</div>
+        <div class="lock-text">REGISTRATION LOCKED</div>
+      </div>
+      
       <div class="form-group">
         <label class="form-label">Full Name <span>*</span></label>
         <input class="form-input" id="f-name" type="text" placeholder="e.g. Juan Dela Cruz" />
@@ -447,9 +544,9 @@
 
       <div class="slots-counter" id="slots-counter">
         <span>SLOTS LEFT: </span>
-        <span class="slots-number" id="slots-number">19</span>
+        <span class="slots-number" id="slots-number">20</span>
         <span> / </span>
-        <span id="slots-total">19</span>
+        <span id="slots-total">20</span>
       </div>
 
       <p class="notice">
@@ -499,11 +596,42 @@ function checkRegistrationStatus() {
   fetch('/api/registration-status')
     .then(r => r.json())
     .then(data => {
-      const maxSlots = data.max_participants || STARTING_SLOTS;
-      const slotsLeft = maxSlots - data.confirmed_count;
+      const slotsLeft = data.max_participants - data.confirmed_count;
 
-      renderSlots(slotsLeft, maxSlots);
-      
+      renderSlots(slotsLeft, data.max_participants);
+
+      if (slotsLeft === 0) {
+        // TRIGGER LOCK ANIMATION
+        const counter = document.getElementById('slots-counter');
+        counter.classList.add('locked');
+        counter.classList.remove('critical');
+        
+        // Show lock overlay
+        document.getElementById('lock-overlay').classList.add('active');
+        
+        // Disable all form inputs
+        document.querySelectorAll('.form-input').forEach(input => {
+          input.disabled = true;
+          input.style.opacity = '0.3';
+        });
+        
+        // Disable submit button
+        const btn = document.querySelector('.submit-btn');
+        btn.disabled = true;
+        btn.style.opacity = '0.3';
+        btn.style.cursor = 'not-allowed';
+        btn.textContent = '[ REGISTRATION LOCKED ]';
+        
+        // Fade out the form after lock animation
+        setTimeout(() => {
+          const form = document.getElementById('registration-form');
+          form.style.transition = 'opacity 0.5s ease';
+          form.style.opacity = '0.4';
+          form.style.pointerEvents = 'none';
+        }, 1500);
+        
+      }
+
       if (!data.is_open) {
         // Registration is closed
         document.getElementById('registration-form').style.display = 'none';
@@ -524,7 +652,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Slot display helpers
-const STARTING_SLOTS = 19;
+const STARTING_SLOTS = 20;
 function renderSlots(slotsLeft, totalSlots) {
   const counter = document.getElementById('slots-counter');
   const numEl = document.getElementById('slots-number');
@@ -536,12 +664,23 @@ function renderSlots(slotsLeft, totalSlots) {
   // Toggle critical animation when 5 or fewer slots remain
   if (slotsLeft <= 5 && slotsLeft > 0) {
     counter.classList.add('critical');
-  } else {
+    counter.classList.remove('locked');
+  } else if (slotsLeft === 0) {
+    counter.classList.add('locked');
     counter.classList.remove('critical');
+  } else {
+    counter.classList.remove('critical', 'locked');
   }
 }
 
 function handleSubmit() {
+  // Check if form is locked
+  const btn = document.querySelector('.submit-btn');
+  if (btn.disabled && btn.textContent.includes('LOCKED')) {
+    showToast('> ERROR: Registration is locked. No slots available.', true);
+    return;
+  }
+
   const name = document.getElementById('f-name').value.trim();
   const age = document.getElementById('f-age').value.trim();
   const codename = document.getElementById('f-codename').value.trim();
@@ -557,7 +696,6 @@ function handleSubmit() {
     showToast('> ERROR: Invalid email address.', true); return;
   }
 
-  const btn = document.querySelector('.submit-btn');
   btn.textContent = '[ SENDING... ]';
   btn.disabled = true;
 
