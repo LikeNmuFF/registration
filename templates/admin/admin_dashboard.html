@@ -265,52 +265,56 @@
     .table-wrap {
       background: var(--panel-2);
       border: 1px solid var(--border);
-      border-radius: 2px;
+      border-radius: 4px;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 13px;
-      table-layout: fixed;
-      min-width: 700px;
+      font-size: 14px;
+      min-width: 900px;
     }
 
     thead { background: var(--header-bg); }
 
     th {
       font-family: 'Share Tech Mono', monospace;
-      font-size: 9px;
+      font-size: 10px;
       letter-spacing: 2px;
       color: var(--muted);
-      padding: 11px 14px;
+      padding: 14px 16px;
       text-align: left;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 2px solid var(--border);
       text-transform: uppercase;
+      white-space: nowrap;
     }
 
     td {
-      padding: 11px 14px;
+      padding: 14px 16px;
       border-bottom: 1px solid var(--border-subtle);
       color: var(--text);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      vertical-align: middle;
     }
 
     tr:last-child td { border-bottom: none; }
-    tbody tr:hover td { background: var(--hover); }
+    tbody tr:hover { background: var(--hover); }
+    tbody tr:hover td { background: transparent; }
 
     .mono { font-family: 'Share Tech Mono', monospace; }
 
     .badge {
       display: inline-block;
-      padding: 2px 10px;
-      border-radius: 2px;
+      padding: 4px 12px;
+      border-radius: 4px;
       font-family: 'Share Tech Mono', monospace;
-      font-size: 10px;
+      font-size: 11px;
       letter-spacing: 1px;
+      font-weight: 600;
     }
 
     .badge-confirmed { background: var(--badge-confirm-bg); color: var(--badge-confirm-text); border: 1px solid var(--badge-confirm-border); }
@@ -322,19 +326,19 @@
       font-size: 10px;
       color: var(--footer-text);
       letter-spacing: 1px;
-      margin-top: 10px;
+      margin-top: 12px;
     }
 
     /* ---- Flash messages ---- */
     .flash {
       background: var(--flash-bg);
       border: 1px solid var(--flash-border);
-      border-left: 3px solid var(--flash-text);
+      border-left: 4px solid var(--flash-text);
       color: var(--flash-text);
       font-family: 'Share Tech Mono', monospace;
-      font-size: 12px;
-      padding: 10px 14px;
-      border-radius: 2px;
+      font-size: 13px;
+      padding: 12px 16px;
+      border-radius: 4px;
       margin-bottom: 20px;
       letter-spacing: 1px;
     }
@@ -342,22 +346,243 @@
     /* ---- Delete button ---- */
     .btn-delete {
       font-family: 'Share Tech Mono', monospace;
-      font-size: 10px;
+      font-size: 11px;
       letter-spacing: 1px;
-      padding: 4px 10px;
-      border-radius: 2px;
+      padding: 8px 16px;
+      border-radius: 4px;
       cursor: pointer;
-      border: 1px solid var(--accent);
-      background: transparent;
-      color: var(--accent-strong);
-      transition: all 0.2s;
+      border: 1px solid var(--accent-strong);
+      background: var(--accent);
+      color: #ffffff;
+      transition: all 0.2s ease;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
     }
     .btn-delete:hover {
-      background: var(--accent);
-      color: #fff;
+      background: var(--accent-strong);
+      border-color: var(--accent-strong);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(192, 57, 43, 0.3);
     }
     .btn-delete:active {
-      transform: scale(0.95);
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    /* ---- Responsive Design ---- */
+    
+    /* Tablets (768px - 1024px) */
+    @media screen and (max-width: 1024px) {
+      .content {
+        padding: 20px;
+        max-width: 100%;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+
+      table {
+        min-width: 800px;
+        font-size: 13px;
+      }
+
+      th, td {
+        padding: 12px 14px;
+      }
+    }
+
+    /* Mobile landscape & portrait (max-width: 768px) */
+    @media screen and (max-width: 768px) {
+      .topbar {
+        padding: 12px 16px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .topbar-left {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .topbar-right {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .topbar-user {
+        font-size: 10px;
+        order: 3;
+        width: 100%;
+        text-align: center;
+      }
+
+      .content {
+        padding: 16px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .stat-card {
+        padding: 14px;
+      }
+
+      .stat-num {
+        font-size: 28px;
+      }
+
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .section-header > div {
+        width: 100%;
+      }
+
+      #export-form {
+        flex-wrap: wrap;
+      }
+
+      .filter-row {
+        flex-wrap: wrap;
+      }
+
+      .filter-btn {
+        flex: 1;
+        min-width: 100px;
+        text-align: center;
+      }
+
+      /* Card-based layout for mobile */
+      .table-wrap {
+        border: none;
+        background: transparent;
+        overflow-x: visible;
+      }
+
+      table {
+        min-width: 100%;
+        font-size: 13px;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tbody tr {
+        display: block;
+        margin-bottom: 12px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 12px;
+      }
+
+      tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border-subtle);
+        white-space: normal;
+        overflow: visible;
+        text-overflow: unset;
+      }
+
+      tbody td:last-child {
+        border-bottom: none;
+        justify-content: center;
+        padding-top: 12px;
+      }
+
+      tbody td::before {
+        content: attr(data-label);
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 9px;
+        letter-spacing: 2px;
+        color: var(--muted);
+        text-transform: uppercase;
+        flex-shrink: 0;
+        margin-right: 12px;
+      }
+
+      .btn-delete {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 16px;
+      }
+    }
+
+    /* Small mobile (max-width: 480px) */
+    @media screen and (max-width: 480px) {
+      .topbar {
+        padding: 10px 12px;
+      }
+
+      .topbar-title {
+        font-size: 11px;
+        letter-spacing: 2px;
+      }
+
+      .content {
+        padding: 12px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .stat-card {
+        padding: 12px;
+      }
+
+      .stat-num {
+        font-size: 24px;
+      }
+
+      .stat-label {
+        font-size: 9px;
+      }
+
+      .section-title {
+        font-size: 10px;
+        letter-spacing: 2px;
+      }
+
+      .btn {
+        font-size: 10px;
+        padding: 6px 12px;
+      }
+
+      .filter-btn {
+        font-size: 9px;
+        padding: 6px 10px;
+      }
+
+      tbody td {
+        font-size: 12px;
+      }
+
+      tbody td::before {
+        font-size: 8px;
+      }
+
+      .btn-delete {
+        font-size: 10px;
+        padding: 8px 12px;
+      }
     }
   </style>
 </head>
@@ -477,32 +702,21 @@
           {% for reg in registrations %}
           <tr data-status="{{ 'confirmed' if reg.confirmed == 1 else 'pending' }}">
 
-            <td class="mono" style="color:var(--accent);">
+            <td data-label="#" class="mono" style="color:var(--accent);">
               {{ loop.index }}
-              <!--
-                loop.index → Jinja2 gives us this automatically inside a for loop
-                It's the current iteration number (1, 2, 3...)
-              -->
             </td>
 
-            <td style="font-weight:600; color:var(--text);">{{ reg.name }}</td>
+            <td data-label="Name" style="font-weight:600; color:var(--text);">{{ reg.name }}</td>
 
-            <td class="mono" style="color:var(--muted);">{{ reg.codename or '—' }}</td>
+            <td data-label="Codename" class="mono" style="color:var(--muted);">{{ reg.codename or '—' }}</td>
 
-            <td class="mono" style="color:var(--muted);">{{ reg.course_year }}</td>
+            <td data-label="Course / Year" class="mono" style="color:var(--muted);">{{ reg.course_year }}</td>
 
-            <td class="mono" style="color:var(--muted);">{{ reg.age }}</td>
+            <td data-label="Age" class="mono" style="color:var(--muted);">{{ reg.age }}</td>
 
-            <td class="mono" style="color:var(--email); font-size:11px;">{{ reg.email }}</td>
+            <td data-label="Email" class="mono" style="color:var(--email); font-size:11px;">{{ reg.email }}</td>
 
-            <td>
-              <!--
-              {% raw %}
-                {% if %} ... {% else %} ... {% endif %} → Jinja2 conditional
-                Shows a green "confirmed" badge or yellow "pending" badge
-                depending on the value of reg.confirmed
-              -->
-              {% endraw %}
+            <td data-label="Status">
               {% if reg.confirmed == 1 %}
                 <span class="badge badge-confirmed">confirmed</span>
               {% else %}
@@ -510,17 +724,13 @@
               {% endif %}
             </td>
 
-            <td class="mono" style="color:var(--muted-2); font-size:11px;">
+            <td data-label="Registered At" class="mono" style="color:var(--muted-2); font-size:11px;">
               {{ reg.registered_at[:16] if reg.registered_at else '—' }}
-              <!--
-                reg.registered_at looks like: "2025-04-15 10:24:00"
-                [:16] slices just the first 16 characters → "2025-04-15 10:24"
-              -->
             </td>
 
-            <td style="text-align:center;">
-              <form action="{{ url_for('admin_delete_registration', reg_id=reg.id) }}" method="post" 
-                    onsubmit="return confirmDelete(event, '{{ reg.name }}', '{{ reg.email }}');" 
+            <td data-label="Action" style="text-align:center;">
+              <form action="{{ url_for('admin_delete_registration', reg_id=reg.id) }}" method="post"
+                    onsubmit="return confirmDelete(event, '{{ reg.name }}', '{{ reg.email }}');"
                     style="display:inline;">
                 <button type="submit" class="btn-delete" title="Delete this registration">
                   🗑️ Delete
