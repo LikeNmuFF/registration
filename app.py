@@ -32,6 +32,8 @@ app.secret_key = os.getenv('SECRET_KEY', secrets.token_urlsafe(16))  # Used to s
 
 ADMIN_USERNAME = os.getenv('ADMIN_USERNAME', 'admin')
 ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'hack4gov2026')
+# Max number of participants allowed; controls slot counter + lock
+MAX_PARTICIPANTS = int(os.getenv('MAX_PARTICIPANTS', 20))
 # ============================================================
 #  DATABASE SETUP 
 # ============================================================
@@ -157,6 +159,39 @@ def index():
 def participants_page():
     return render_template('participants.html')
 
+
+@app.route('/api/registration-status')
+def registration_status():
+    """
+    Returns live slot availability for the landing page.
+    Payload example:
+      { "max_participants": 20, "confirmed_count": 7, "is_open": true }
+    """
+    conn = get_db()
+    try:
+        confirmed_count = conn.execute("""
+            SELECT COUNT(*) AS c FROM registrations WHERE confirmed = 1
+        """).fetchone()['c']
+        total_count = conn.execute("""
+            SELECT COUNT(*) AS c FROM registrations
+        """).fetchone()['c']
+    except Exception as e:
+        print(f"DB error: {e}")
+        confirmed_count = 0
+        total_count = 0
+    finally:
+        conn.close()
+
+    # Registration is considered open until confirmed slots hit the cap
+    is_open = confirmed_count < MAX_PARTICIPANTS
+
+    return jsonify({
+        'max_participants': MAX_PARTICIPANTS,
+        'confirmed_count': confirmed_count,
+        'pending_count': max(total_count - confirmed_count, 0),
+        'is_open': is_open
+    })
+
 @app.route('/api/register', methods=['POST'])
 def register():
     data           = request.get_json()
@@ -170,9 +205,24 @@ def register():
     if not all([name, age, course_year, contact_number, email]):
         return jsonify({'success': False, 'message': 'All fields are required.'})
 
+    conn = get_db()
+
+    # Hard guard: stop registrations once confirmed seats hit the cap
+    try:
+        current_confirmed = conn.execute(
+            "SELECT COUNT(*) AS c FROM registrations WHERE confirmed = 1"
+        ).fetchone()['c']
+    except Exception as e:
+        print(f"DB error while checking cap: {e}")
+        conn.close()
+        return jsonify({'success': False, 'message': 'Database error. Please try again.'})
+
+    if current_confirmed >= MAX_PARTICIPANTS:
+        conn.close()
+        return jsonify({'success': False, 'message': 'Registration is closed. Slots are full.'})
+
     token = secrets.token_urlsafe(32)
 
-    conn = get_db()
     try:
         conn.execute("""
             INSERT INTO registrations (name, codename, age, course_year, contact_number, email, token)
