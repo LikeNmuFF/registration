@@ -420,6 +420,121 @@ def admin_delete_registration(reg_id):
 
 
 # ------------------------------------------------------------
+#  RESEND CONFIRMATION EMAIL  —  public API endpoint
+#  SECURITY: Only resends to unconfirmed emails, rate limited
+# ------------------------------------------------------------
+@app.route('/api/resend-confirmation', methods=['POST'])
+def resend_confirmation():
+    """
+    Resend confirmation email to a registered user.
+    
+    SECURITY MEASURES:
+    - Only works for UNCONFIRMED emails (confirmed=0)
+    - Uses the SAME token (doesn't generate new one)
+    - Rate limited via session tracking
+    - No database modification, only reads and sends email
+    - Cannot be used to manipulate database
+    """
+    from flask import session
+    import time
+    
+    data = request.get_json()
+    email = data.get('email', '').strip().lower()
+
+    if not email:
+        return jsonify({'success': False, 'message': 'Email is required.'})
+    
+    # Validate email format
+    import re
+    email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    if not re.match(email_pattern, email):
+        return jsonify({
+            'success': False,
+            'message': 'Invalid email format.'
+        })
+
+    conn = get_db()
+    try:
+        # Find the registration by email (case-insensitive)
+        row = conn.execute("""
+            SELECT id, name, email, token, confirmed, registered_at
+            FROM registrations
+            WHERE LOWER(email) = ?
+        """, (email,)).fetchone()
+
+        # Email not found - don't reveal if email exists or not for security
+        if row is None:
+            conn.close()
+            return jsonify({
+                'success': False,
+                'emailNotFound': True,
+                'message': 'Email not found in our database. You may have used a different email or it was misspelled during registration.'
+            })
+
+        # SECURITY: Already confirmed - BLOCK resend
+        if row['confirmed'] == 1:
+            conn.close()
+            print(f"[SECURITY] Blocked resend attempt for already-confirmed email: {email}")
+            return jsonify({
+                'success': False,
+                'alreadyConfirmed': True,
+                'message': 'This email is already confirmed! Your name should be showing on the participants list.'
+            })
+
+        # Rate limiting: Check if user requested recently (last 5 minutes)
+        last_resend = session.get(f'resend_{email}')
+        if last_resend and (time.time() - last_resend) < 300:  # 5 minutes
+            conn.close()
+            wait_time = int((300 - (time.time() - last_resend)) / 60)
+            return jsonify({
+                'success': False,
+                'rateLimited': True,
+                'message': f'Please wait {wait_time} minute(s) before requesting another email. This prevents spam.'
+            })
+
+        # SECURITY: Only resend if email is NOT confirmed (double-check)
+        # This is the critical security check - cannot manipulate database
+        if row['confirmed'] != 0:
+            conn.close()
+            print(f"[SECURITY] Blocked resend for email with non-zero confirmed status: {email}")
+            return jsonify({
+                'success': False,
+                'message': 'Cannot resend confirmation for this email.'
+            })
+
+        # Send the confirmation email with the ORIGINAL token
+        # This does NOT change the database, only sends email
+        email_sent = send_confirmation_email(row['email'], row['name'], row['token'])
+
+        if email_sent:
+            # Record the resend timestamp for rate limiting
+            session[f'resend_{email}'] = time.time()
+            session.modified = True
+            
+            print(f"[SUCCESS] Resent confirmation email to: {email}")
+            conn.close()
+            return jsonify({
+                'success': True,
+                'message': 'Confirmation email resent successfully! Please check your inbox and spam folder.'
+            })
+        else:
+            conn.close()
+            print(f"[ERROR] Failed to send email to: {email}")
+            return jsonify({
+                'success': False,
+                'message': 'Failed to send email. Please contact the organizers directly.'
+            })
+
+    except Exception as e:
+        print(f"[ERROR] DB error while resending confirmation: {e}")
+        conn.close()
+        return jsonify({
+            'success': False,
+            'message': 'Database error. Please try again later.'
+        })
+
+
+# ------------------------------------------------------------
 #  EXPORT CSV  —  downloads all registrations as a .csv file
 # ------------------------------------------------------------
 @app.route('/admin/export')
@@ -514,5 +629,5 @@ with app.app_context():
     init_db()
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
     

@@ -1,0 +1,482 @@
+﻿<!-- ============================================================
+     FLOATING AI ASSISTANT
+     ============================================================ -->
+<style>
+  /* Chat Toggle Button */
+  .ai-assistant-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #8B1A1A;
+    border: 2px solid #c0392b;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(139, 26, 26, 0.4);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ai-assistant-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 24px rgba(139, 26, 26, 0.6);
+  }
+  .ai-assistant-btn.pulse {
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 4px 16px rgba(139, 26, 26, 0.4); }
+    50% { box-shadow: 0 4px 24px rgba(139, 26, 26, 0.8); }
+  }
+
+  /* Chat Window */
+  .ai-chat-window {
+    position: fixed;
+    bottom: 100px;
+    right: 24px;
+    width: 380px;
+    max-width: calc(100vw - 48px);
+    height: 520px;
+    max-height: calc(100vh - 150px);
+    background: #0a0a0a;
+    border: 2px solid #8B1A1A;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .ai-chat-window.active { display: flex; }
+
+  /* Chat Header */
+  .chat-header {
+    background: #8B1A1A;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #c0392b;
+  }
+  .chat-header-left { display: flex; align-items: center; gap: 10px; }
+  .chat-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #0a0a0a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .chat-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: #fff;
+  }
+  .chat-subtitle {
+    font-size: 10px;
+    color: #ffd0d0;
+    font-family: 'Share Tech Mono', monospace;
+    margin-top: 2px;
+  }
+  .chat-close {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background 0.2s;
+  }
+  .chat-close:hover { background: rgba(255, 255, 255, 0.1); }
+
+  /* Chat Messages */
+  .chat-messages {
+    flex: 1;
+    padding: 18px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .chat-messages::-webkit-scrollbar { width: 6px; }
+  .chat-messages::-webkit-scrollbar-track { background: #0a0a0a; }
+  .chat-messages::-webkit-scrollbar-thumb { background: #8B1A1A; border-radius: 3px; }
+
+  /* Message Bubbles */
+  .message {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .message.bot { background: #111; border: 1px solid #1a0505; color: #f0f0f0; align-self: flex-start; }
+  .message.user { background: #8B1A1A; color: #fff; align-self: flex-end; }
+  .message .timestamp { font-size: 9px; color: #555; margin-top: 4px; font-family: 'Share Tech Mono', monospace; }
+
+  /* Quick Reply Buttons */
+  .quick-replies { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .quick-btn {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    padding: 6px 10px;
+    background: transparent;
+    border: 1px solid #8B1A1A;
+    color: #c0392b;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .quick-btn:hover { background: #8B1A1A; color: #fff; }
+
+  /* Chat Input */
+  .chat-input-area { padding: 14px; border-top: 1px solid #1a0505; display: flex; gap: 8px; }
+  .chat-input {
+    flex: 1;
+    padding: 10px 12px;
+    background: #111;
+    border: 1px solid #2a0a0a;
+    border-radius: 6px;
+    color: #f0f0f0;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    outline: none;
+  }
+  .chat-input:focus { border-color: #8B1A1A; }
+  .chat-input::placeholder { color: #555; }
+  .chat-send {
+    padding: 10px 16px;
+    background: #8B1A1A;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.2s;
+  }
+  .chat-send:hover { background: #c0392b; }
+
+  /* Typing Indicator */
+  .typing-indicator { display: none; align-self: flex-start; padding: 10px 14px; background: #111; border: 1px solid #1a0505; border-radius: 8px; }
+  .typing-indicator.active { display: flex; gap: 4px; }
+  .typing-dot { width: 6px; height: 6px; border-radius: 50%; background: #555; animation: typing 1.4s infinite; }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typing { 0%, 60%, 100% { opacity: 0.3; } 30% { opacity: 1; } }
+
+  /* Mobile Responsive */
+  @media screen and (max-width: 480px) {
+    .ai-chat-window { right: 12px; bottom: 90px; width: calc(100vw - 24px); height: calc(100vh - 120px); }
+    .ai-assistant-btn { bottom: 16px; right: 16px; width: 54px; height: 54px; font-size: 22px; }
+  }
+</style>
+
+<!-- AI Assistant Button -->
+<button class="ai-assistant-btn pulse" id="ai-assistant-btn" onclick="toggleChat()">🤖</button>
+
+<!-- AI Chat Window -->
+<div class="ai-chat-window" id="ai-chat-window">
+  <div class="chat-header">
+    <div class="chat-header-left">
+      <div class="chat-avatar">🤖</div>
+      <div>
+        <div class="chat-title">HACK4GOV ASSISTANT</div>
+        <div class="chat-subtitle" id="chat-subtitle">Online</div>
+      </div>
+    </div>
+    <button class="chat-close" onclick="toggleChat()">✕</button>
+  </div>
+
+  <div class="chat-messages" id="chat-messages"></div>
+
+  <div class="typing-indicator" id="typing-indicator">
+    <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+  </div>
+
+  <div class="chat-input-area">
+    <input type="text" class="chat-input" id="chat-input" placeholder="Type your question..." onkeypress="handleChatKeyPress(event)">
+    <button class="chat-send" onclick="sendMessage()">➤</button>
+  </div>
+</div>
+
+<script>
+  // ============================================================
+  // AI ASSISTANT LOGIC
+  // ============================================================
+  let waitingForEmail = false;
+
+  function isValidEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  }
+
+  function askForEmailForResend() {
+    waitingForEmail = true;
+    const input = document.getElementById('chat-input');
+    input.placeholder = 'Enter your email address...';
+    input.focus();
+  }
+
+  function cancelWaitingForEmail() {
+    waitingForEmail = false;
+    document.getElementById('chat-input').placeholder = 'Type your question...';
+  }
+
+  async function handleEmailResend(email) {
+    waitingForEmail = false;
+    const input = document.getElementById('chat-input');
+    input.placeholder = 'Type your question...';
+    showTyping(true);
+
+    try {
+      const response = await fetch('/api/resend-confirmation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await response.json();
+
+      setTimeout(() => {
+        showTyping(false);
+        if (data.success) {
+          addMessage(`✅ <strong>Success!</strong> A new confirmation email was sent to <strong>${email}</strong>.<br><br>Please check your inbox (and spam folder) for an email from <strong>kleia6678@gmail.com</strong> and click the confirmation link. Your name will appear on the participants list right after you confirm. 🎉`, false);
+        } else if (data.emailNotFound) {
+          addMessage(`❌ <strong>Email not found</strong><br><br>I could not find <strong>${email}</strong> in our database. This usually means it was typed incorrectly during registration or a different address was used.<br><br><strong>What to do:</strong><br>• Re-register with the correct email, or<br>• Contact the organizers at <strong>ccsweek@basilanstatecollege.edu.ph</strong>.`, false);
+        } else if (data.alreadyConfirmed) {
+          addMessage(`ℹ️ <strong>Already confirmed</strong><br><br>The email <strong>${email}</strong> is already confirmed. If your name is not showing, try refreshing the participants page or contact the organizers.`, false);
+        } else {
+          addMessage(`⚠️ <strong>Something went wrong.</strong><br><br>${data.message || 'Please try again later or contact the organizers directly.'}`, false);
+        }
+      }, 1000);
+    } catch (error) {
+      setTimeout(() => {
+        showTyping(false);
+        addMessage(`⚠️ <strong>Error:</strong> Could not connect to the server. Please try again later or email <strong>ccsweek@basilanstatecollege.edu.ph</strong>.`, false);
+      }, 800);
+    }
+  }
+
+  function getGreeting() {
+    const now = new Date();
+    const phTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
+    const hour = phTime.getHours();
+    if (hour >= 5 && hour < 12) return 'Good morning';
+    if (hour >= 12 && hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  }
+
+  function getPhilippinesTime() {
+    const now = new Date();
+    return new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
+  }
+
+  function formatTime(date) {
+    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+  }
+
+  // Knowledge base with polite, grammatical responses
+  const knowledgeBase = {
+    greetings: {
+      patterns: ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening', 'good day', 'kamusta', 'kumusta'],
+      response: (g) => `${g}! 👋 Welcome to Hack4Gov. I’m here to help with registration or any event questions.`
+    },
+    checkEmail: {
+      patterns: ["didn't receive", 'no email', 'where is the email', 'no confirmation', "haven't received", 'did not get', 'no mail', 'resend', 'send again', 'resend email', 'can you resend', 'send email', 'can you send', 'please resend', 'email again', 'send my', 'resend my', 'my email', 'email confirmation', 'confirmation email', 'send me', 'email not received', 'not received', 'receive email', 'getting email', 'get email', 'receib', 'resen', 'reseb', 'sennd', 'senf', 'mai'],
+      response: () => {
+        setTimeout(() => askForEmailForResend(), 500);
+        return 'I can resend your confirmation email. 😊<br><br><strong>Please type your email address below:</strong>';
+      }
+    },
+    emailConfirmation: {
+      patterns: ['email', 'confirm', 'verify', 'verification', 'why not showing', 'why not listed', 'why my name', 'not displaying', 'not appearing', 'registered but not', 'where is my name', 'not in participants', 'not on the list', 'i registered', 'already registered', 'registered but not showing', 'registered but not on participants', 'why not showing on participants', 'why not in the list'],
+      response: () => `Happy to help. 📧<br><br>After registering, you need to <strong>confirm your email</strong> by clicking the link we sent.<br><br><strong>Why your name is not visible yet:</strong><br>• The participants list only shows people who have verified their email.<br><br><strong>What to do:</strong><br>1) Open the email from <strong>kleia6678@gmail.com</strong><br>2) Click the “[CONFIRM MY REGISTRATION]” button<br>3) If you can’t find it, check spam/junk or ask me to resend it<br><br>Once you confirm, your name appears on the list. 🎉`
+    },
+    eventDetails: {
+      patterns: ['when', 'date', 'schedule', 'time', 'where', 'location', 'venue', 'event details', 'what is hack4gov', 'about the event', 'what is this event'],
+      response: () => `🎮 <strong>Hack4Gov - CCS Week 2026</strong><br><br>🗓 <strong>Date:</strong> April 21–22, 2026<br>📍 <strong>Venue:</strong> 2nd Floor Computer
+Laboratory Bldg.
+<br>🏛️ <strong>Organized by:</strong> College of Computing Studies (CCS)<br><br>It’s a Capture the Flag Competition. 🚀`
+    },
+    registrationProcess: {
+      patterns: ['how to register', 'how can i join', 'how to join', 'registration process', 'how do i register', 'steps to register', 'what do i need'],
+      response: () => `Sure—here’s how to register:<br><br>1) Fill out the form on this page<br>2) Enter your name, age, course, contact number, and email<br>3) Submit the form<br>4) Open the confirmation email and click the link<br>5) You’re set once you confirm 🎉<br><br>Note: Your slot is secured only after you confirm by email. I can guide you through any step. 😊`
+    },
+    slotsAvailable: {
+      patterns: ['slots', 'how many slots', 'is there still slot', 'available slot', 'slot left', 'is it full', 'slots left', 'capacity', 'is registration open'],
+      response: () => `🎯 <strong>Slot Availability</strong><br><br>Registration stays open until all slots are filled. Check the counter at the top of the page for the latest number.<br><br>Tip: Register and confirm early to be sure you’re in. 🏃‍♂️💨`
+    },
+    requirements: {
+      patterns: ['requirements', 'what to bring', 'eligibility', 'who can join', 'am i eligible', 'can i join', 'qualifications'],
+      response: () => `📋 <strong>Requirements</strong><br><br>• CCS student<br>• Valid email<br>• Bring your self on orientation<br>• Register and confirm before slots run out<br><br>If you meet these, you’re ready to join. 💪`
+    },
+    contact: {
+      patterns: ['contact', 'organizer', 'email of organizer', 'how to contact', 'reach organizer', 'talk to organizer', 'help from organizer', 'ccs week'],
+      response: () => `📞 <strong>Contact the Organizers</strong><br><br>📧 Email: <strong>
+cicttexecutivecouncil@gmail.com</strong><br>🏫 Basilan State College — College of Computing Studies<br><br>You can also visit the <a href="https://www.facebook.com/profile.php?id=100086564846689" target="_blank" style="color: #c0392b; text-decoration: underline;">facebook page</a>. They're happy to help. 😊`
+    },
+    thanks: {
+      patterns: ['thank', 'thanks', 'salamat', 'appreciate', 'helpful'],
+      response: () => 'You’re very welcome! 😊 I’m glad I could help. If more questions come up, just ask.'
+    },
+    goodbye: {
+      patterns: ['bye', 'goodbye', 'see you', 'okay thanks', "that's all", 'no more questions'],
+      response: (g) => `${g}! 👋 Thanks for chatting. Remember to confirm your email to secure your slot. See you at the event! 🎉🚀`
+    }
+  };
+
+  const politeResponses = {
+    patterns: ['okay', 'ok', 'alright', 'cool', 'nice', 'great', 'awesome', 'wow', 'i see', 'uhm', 'hmm', 'maybe', 'ill think about it'],
+    response: (g) => `${g}! 😊 Take your time. If you need any help with registration, I’m here for you.`
+  };
+
+  function findResponse(userMessage) {
+    const msg = userMessage.toLowerCase().trim();
+    const greeting = getGreeting();
+
+    const resendKeywords = ['resend', 'resen', 'reseb', 'send', 'sen', 'receive', 'receib', 'get', 'got', 'where', 'no ', 'not', "didn't", 'didn', "haven't", 'haven', 'did not', 'have not'];
+    const hasResendIntent = resendKeywords.some(keyword => msg.includes(keyword));
+
+    if (hasResendIntent && (msg.includes('email') || msg.includes('mail') || msg.includes('mai') || msg.includes('confirm'))) {
+      setTimeout(() => askForEmailForResend(), 500);
+      return 'I can resend your confirmation email. 😊<br><br><strong>Please type your email address below:</strong>';
+    }
+
+    for (const data of Object.values(knowledgeBase)) {
+      if (data.patterns.some(pattern => msg.includes(pattern))) {
+        return typeof data.response === 'function' ? data.response(greeting) : data.response;
+      }
+    }
+
+    if (politeResponses.patterns.some(pattern => msg.includes(pattern))) {
+      return politeResponses.response(greeting);
+    }
+
+    return `Thanks for reaching out. 😊<br><br>I can help with:<br>• Email confirmation<br>• Registration steps<br>• Event details (date, venue, schedule)<br>• Slot availability<br>• Requirements to join<br>• Organizer contacts<br><br>Ask me anything about Hack4Gov registration, or pick a quick question below. 👇`;
+  }
+
+  function addMessage(text, isUser = false) {
+    const messagesContainer = document.getElementById('chat-messages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+    const timestamp = formatTime(getPhilippinesTime());
+    messageDiv.innerHTML = `<div>${text}</div><div class="timestamp">${timestamp}</div>`;
+    messagesContainer.appendChild(messageDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+
+  function showTyping(show) {
+    const indicator = document.getElementById('typing-indicator');
+    indicator.className = show ? 'typing-indicator active' : 'typing-indicator';
+  }
+
+  function sendMessage() {
+    const input = document.getElementById('chat-input');
+    const message = input.value.trim();
+    if (!message) return;
+
+    if (waitingForEmail) {
+      addMessage(message, true);
+      input.value = '';
+      if (!isValidEmail(message)) {
+        showTyping(true);
+        setTimeout(() => {
+          showTyping(false);
+          addMessage('⚠️ That does not look like a valid email. Please enter one like <strong>yourname@gmail.com</strong>.', false);
+          input.placeholder = 'Enter valid email address...';
+          input.focus();
+          waitingForEmail = true;
+        }, 600);
+        return;
+      }
+      handleEmailResend(message);
+      return;
+    }
+
+    addMessage(message, true);
+    input.value = '';
+    showTyping(true);
+    const delay = Math.random() * 1000 + 500;
+    setTimeout(() => {
+      showTyping(false);
+      const response = findResponse(message);
+      addMessage(response, false);
+    }, delay);
+  }
+
+  function handleChatKeyPress(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      sendMessage();
+    }
+    if (event.key === 'Escape' && waitingForEmail) {
+      cancelWaitingForEmail();
+      addMessage('ℹ️ Email input cancelled. If you have other questions, just let me know.', false);
+    }
+  }
+
+  function toggleChat() {
+    const chatWindow = document.getElementById('ai-chat-window');
+    const btn = document.getElementById('ai-assistant-btn');
+    chatWindow.classList.toggle('active');
+    if (chatWindow.classList.contains('active')) {
+      btn.style.display = 'none';
+      if (document.getElementById('chat-messages').children.length === 0) {
+        sendGreeting();
+      }
+    } else {
+      btn.style.display = 'flex';
+    }
+  }
+
+  function sendGreeting() {
+    const greeting = getGreeting();
+    const messagesContainer = document.getElementById('chat-messages');
+    showTyping(true);
+    setTimeout(() => {
+      showTyping(false);
+      const welcomeMsg = document.createElement('div');
+      welcomeMsg.className = 'message bot';
+      welcomeMsg.innerHTML = `<div>${greeting}! 👋 I’m the <strong>Hack4Gov Assistant</strong>. I can help with registration, email confirmation, and event details.</div><div class="timestamp">${formatTime(getPhilippinesTime())}</div>`;
+      messagesContainer.appendChild(welcomeMsg);
+      const quickReplies = document.createElement('div');
+      quickReplies.className = 'quick-replies';
+      quickReplies.innerHTML = `
+        <button class="quick-btn" onclick="quickReply('I registered, but my name is not on the participants page')">❓ Registered but not showing</button>
+        <button class="quick-btn" onclick="quickReply('How do I register?')">📝 How to register</button>
+        <button class="quick-btn" onclick="quickReply('When and where is the event?')">📅 Event details</button>
+        <button class="quick-btn" onclick="quickReply('I did not receive the confirmation email')">📧 No email received</button>
+      `;
+      messagesContainer.appendChild(quickReplies);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }, 900);
+  }
+
+  function quickReply(message) {
+    document.getElementById('chat-input').value = message;
+    sendMessage();
+  }
+
+  function updateSubtitle() {
+    const subtitle = document.getElementById('chat-subtitle');
+    if (subtitle) {
+      subtitle.textContent = `🟢 Online • ${formatTime(getPhilippinesTime())}`;
+    }
+  }
+
+  setInterval(updateSubtitle, 60000);
+  updateSubtitle();
+</script>
