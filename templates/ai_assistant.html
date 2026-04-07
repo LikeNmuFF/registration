@@ -255,7 +255,8 @@
         if (data.success) {
           addMessage(`✅ <strong>Success!</strong> A new confirmation email was sent to <strong>${email}</strong>.<br><br>Please check your inbox (and spam folder) for an email from <strong>kleia6678@gmail.com</strong> and click the confirmation link. Your name will appear on the participants list right after you confirm. 🎉`, false);
         } else if (data.emailNotFound) {
-          addMessage(`❌ <strong>Email not found</strong><br><br>I could not find <strong>${email}</strong> in our database. This usually means it was typed incorrectly during registration or a different address was used.<br><br><strong>What to do:</strong><br>• Re-register with the correct email, or<br>• Contact the organizers at <strong>ccsweek@basilanstatecollege.edu.ph</strong>.`, false);
+          addMessage(`❌ <strong>Email not found</strong><br><br>I could not find <strong>${email}</strong> in our database. This usually means it was typed incorrectly during registration or a different address was used.<br><br><strong>What to do:</strong><br>• Re-register with the correct email, or<br>• Contact the organizers at <strong>
+cicttexecutivecouncil@gmail.com</strong>.`, false);
         } else if (data.alreadyConfirmed) {
           addMessage(`ℹ️ <strong>Already confirmed</strong><br><br>The email <strong>${email}</strong> is already confirmed. If your name is not showing, try refreshing the participants page or contact the organizers.`, false);
         } else {
@@ -265,7 +266,8 @@
     } catch (error) {
       setTimeout(() => {
         showTyping(false);
-        addMessage(`⚠️ <strong>Error:</strong> Could not connect to the server. Please try again later or email <strong>ccsweek@basilanstatecollege.edu.ph</strong>.`, false);
+        addMessage(`⚠️ <strong>Error:</strong> Could not connect to the server. Please try again later or email <strong>
+cicttexecutivecouncil@gmail.com</strong>.`, false);
       }, 800);
     }
   }
