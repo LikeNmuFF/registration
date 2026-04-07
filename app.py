@@ -10,6 +10,7 @@ from flask import (
     flash             # flash  → sends a one-time message to the next page
                       # e.g., "Wrong password!" shown after a failed login
 )
+from datetime import datetime
 import sqlite3
 import smtplib
 from email.mime.text import MIMEText
@@ -534,6 +535,12 @@ def resend_confirmation():
         })
 
 
+# Helper function to escape HTML
+def esc(text):
+    """Escape HTML special characters to prevent XSS"""
+    return str(text).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;').replace("'", '&#x27;')
+
+
 # ------------------------------------------------------------
 #  EXPORT CSV  —  downloads all registrations as a .csv file
 # ------------------------------------------------------------
@@ -555,6 +562,7 @@ def admin_export():
 
     conn = get_db()
     try:
+        # Get all registration data
         rows = conn.execute("""
             SELECT name, codename, age, course_year, contact_number, email,
                    CASE WHEN confirmed = 1 THEN 'Confirmed' ELSE 'Pending' END AS status,
@@ -562,6 +570,17 @@ def admin_export():
             FROM registrations
             ORDER BY registered_at ASC
         """).fetchall()
+        
+        # Special handling for codename export
+        codename_rows = None
+        if fields_key == 'all_codename':
+            codename_rows = conn.execute("""
+                SELECT codename, name, course_year
+                FROM registrations
+                WHERE codename IS NOT NULL AND codename != ''
+                ORDER BY registered_at ASC
+            """).fetchall()
+
     except Exception as e:
         print(f"DB error: {e}")
         conn.close()
@@ -572,22 +591,238 @@ def admin_export():
     # Build export
     if export_format == 'html':
         from flask import make_response
-        header_cells = ''.join(f'<th>{h.replace("_"," ").title()}</th>' for h in columns)
-        body_rows = []
-        for row in rows:
-            body_cells = []
-            for col in columns:
-                val = row[col] if col != 'codename' else (row[col] or '')
-                body_cells.append(f'<td>{val}</td>')
-            body_rows.append('<tr>' + ''.join(body_cells) + '</tr>')
-        html = f"""
-        <html><head><meta charset='UTF-8'><title>Hack4Gov Export</title>
-        <style>table{{border-collapse:collapse;font-family:monospace;font-size:13px;}}
-        th,td{{border:1px solid #ccc;padding:6px 10px;}}</style></head><body>
-        <h3>Hack4Gov Export ({fields_key})</h3>
-        <table><thead><tr>{header_cells}</tr></thead><tbody>{''.join(body_rows)}</tbody></table>
-        </body></html>
-        """
+
+        # Special design for codename export (matches participants.html)
+        if fields_key == 'all_codename' and codename_rows:
+            codename_items = []
+            for i, row in enumerate(codename_rows, 1):
+                codename_items.append(f"""
+        <div class="codename-card">
+            <div class="card-num">{str(i).zfill(2)}</div>
+            <div class="card-codename">{esc(row['codename'])}</div>
+        </div>""")
+
+            html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hack4Gov - Codename List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        body {{
+            background: #0a0a0a;
+            font-family: 'Rajdhani', sans-serif;
+            color: #f0f0f0;
+            min-height: 100vh;
+        }}
+        body::before {{
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(#8B1A1A 1px, transparent 1px),
+                linear-gradient(90deg, #8B1A1A 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.06;
+            pointer-events: none;
+        }}
+        .top-bar {{
+            background: #8B1A1A;
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 2px solid #c0392b;
+            position: relative;
+            z-index: 2;
+        }}
+        .dot {{
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: #ff4444;
+            animation: blink 1.2s infinite;
+        }}
+        @keyframes blink {{ 0%,100%{{opacity:1}} 50%{{opacity:0.3}} }}
+        .top-bar-text {{
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+            color: #ffd0d0;
+            letter-spacing: 2px;
+        }}
+        .page-header {{
+            text-align: center;
+            padding: 28px 24px 16px;
+            position: relative;
+            z-index: 2;
+        }}
+        .page-title {{
+            font-size: 13px;
+            font-family: 'Share Tech Mono', monospace;
+            color: #8B1A1A;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }}
+        .page-h1 {{
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: #fff;
+            text-transform: uppercase;
+        }}
+        .stats-row {{
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin: 16px auto;
+            max-width: 600px;
+            position: relative;
+            z-index: 2;
+            padding: 0 24px;
+        }}
+        .stat-box {{
+            flex: 1;
+            background: #111;
+            border: 1px solid #2a0a0a;
+            border-top: 2px solid #8B1A1A;
+            border-radius: 2px;
+            padding: 12px;
+            text-align: center;
+        }}
+        .stat-num {{
+            font-size: 28px;
+            font-weight: 700;
+            color: #c0392b;
+            font-family: 'Share Tech Mono', monospace;
+        }}
+        .stat-lbl {{
+            font-size: 11px;
+            color: #555;
+            letter-spacing: 2px;
+            font-family: 'Share Tech Mono', monospace;
+            text-transform: uppercase;
+        }}
+        .codename-list {{
+            max-width: 700px;
+            margin: 0 auto 40px;
+            padding: 0 24px;
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+        }}
+        .codename-card {{
+            background: #0d0d0d;
+            border: 1px solid #1a0505;
+            border-radius: 4px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: border-color 0.15s, background 0.15s;
+        }}
+        .codename-card:hover {{
+            background: #120505;
+            border-color: #3a0a0a;
+        }}
+        .card-num {{
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 14px;
+            color: #8B1A1A;
+            min-width: 28px;
+        }}
+        .card-codename {{
+            font-size: 18px;
+            font-weight: 700;
+            color: #c0392b;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 2px;
+            flex: 1;
+        }}
+        .card-name {{
+            font-size: 12px;
+            color: #555;
+            font-family: 'Share Tech Mono', monospace;
+        }}
+        .footer {{
+            position: relative;
+            z-index: 2;
+            padding: 14px 20px 24px;
+            text-align: center;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            color: #555;
+            letter-spacing: 1.5px;
+        }}
+        @media (max-width: 640px) {{
+            .top-bar {{ padding: 10px 14px; }}
+            .page-header {{ padding: 22px 14px 10px; }}
+            .page-title {{ font-size: 11px; }}
+            .page-h1 {{ font-size: 24px; }}
+            .codename-list {{ grid-template-columns: 1fr; padding: 0 14px; }}
+        }}
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="dot"></div>
+        <span class="top-bar-text">HACK4GOV // CODENAME EXPORT</span>
+    </div>
+
+    <div class="page-header">
+        <div class="page-title">hack4gov / codename directory</div>
+        <div class="page-h1">All Codenames</div>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-box">
+            <div class="stat-num">{len(codename_items)}</div>
+            <div class="stat-lbl">Total Codenames</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-num" style="font-size:18px;padding-top:4px;">APR 20</div>
+            <div class="stat-lbl">Event Start</div>
+        </div>
+    </div>
+
+    <div class="codename-list">
+        {''.join(codename_items) if codename_items else '<div class="stat-box" style="grid-column:1/-1;"><div class="stat-lbl" style="padding:40px;">NO CODENAMES YET</div></div>'}
+    </div>
+
+    <div class="footer">
+        Exported from Hack4Gov Admin Panel · {datetime.now().strftime('%Y-%m-%d %H:%M')}
+    </div>
+</body>
+</html>"""
+        else:
+            # Generic HTML table for other exports
+            header_cells = ''.join(f'<th>{h.replace("_"," ").title()}</th>' for h in columns)
+            body_rows = []
+            for row in rows:
+                body_cells = []
+                for col in columns:
+                    val = row[col] if col != 'codename' else (row[col] or '')
+                    body_cells.append(f'<td>{esc(str(val))}</td>')
+                body_rows.append('<tr>' + ''.join(body_cells) + '</tr>')
+            html = f"""<!DOCTYPE html>
+            <html><head><meta charset='UTF-8'><title>Hack4Gov Export</title>
+            <style>
+                * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+                body {{ background: #0a0a0a; font-family: monospace; color: #f0f0f0; padding: 20px; }}
+                h3 {{ color: #8B1A1A; margin: 20px 0; font-family: monospace; }}
+                table {{ border-collapse: collapse; width: 100%; margin: 20px 0; }}
+                th, td {{ border: 1px solid #2a0a0a; padding: 10px 14px; text-align: left; }}
+                th {{ background: #8B1A1A; color: #fff; font-size: 11px; letter-spacing: 2px; }}
+                td {{ background: #0d0d0d; font-size: 13px; }}
+                tr:hover td {{ background: #120505; }}
+            </style></head><body>
+            <h3>Hack4Gov Export ({fields_key.replace('_', ' ').title()})</h3>
+            <table><thead><tr>{header_cells}</tr></thead><tbody>{''.join(body_rows)}</tbody></table>
+            </body></html>"""
+        
         resp = make_response(html)
         resp.headers['Content-Type'] = 'text/html'
         resp.headers['Content-Disposition'] = f'attachment; filename=hack4gov_{fields_key}.html'
