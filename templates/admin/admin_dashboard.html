@@ -338,6 +338,27 @@
       margin-bottom: 20px;
       letter-spacing: 1px;
     }
+
+    /* ---- Delete button ---- */
+    .btn-delete {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      padding: 4px 10px;
+      border-radius: 2px;
+      cursor: pointer;
+      border: 1px solid var(--accent);
+      background: transparent;
+      color: var(--accent-strong);
+      transition: all 0.2s;
+    }
+    .btn-delete:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-delete:active {
+      transform: scale(0.95);
+    }
   </style>
 </head>
 <body>
@@ -432,13 +453,14 @@
         <thead>
           <tr>
             <th style="width:50px;">#</th>
-            <th style="width:18%;">Name</th>
-            <th style="width:14%;">Codename</th>
-            <th style="width:16%;">Course / Year</th>
-            <th style="width:8%;">Age</th>
-            <th style="width:22%;">Email</th>
-            <th style="width:10%;">Status</th>
-            <th style="width:14%;">Registered At</th>
+            <th style="width:16%;">Name</th>
+            <th style="width:13%;">Codename</th>
+            <th style="width:14%;">Course / Year</th>
+            <th style="width:7%;">Age</th>
+            <th style="width:20%;">Email</th>
+            <th style="width:9%;">Status</th>
+            <th style="width:12%;">Registered At</th>
+            <th style="width:9%;">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -496,6 +518,16 @@
               -->
             </td>
 
+            <td style="text-align:center;">
+              <form action="{{ url_for('admin_delete_registration', reg_id=reg.id) }}" method="post" 
+                    onsubmit="return confirmDelete(event, '{{ reg.name }}', '{{ reg.email }}');" 
+                    style="display:inline;">
+                <button type="submit" class="btn-delete" title="Delete this registration">
+                  🗑️ Delete
+                </button>
+              </form>
+            </td>
+
           </tr>
           {% else %}
           <!--
@@ -504,7 +536,7 @@
           -->
           {% endraw %}
           <tr>
-            <td colspan="7" style="text-align:center; color:var(--muted-2); font-family:'Share Tech Mono',monospace;
+            <td colspan="9" style="text-align:center; color:var(--muted-2); font-family:'Share Tech Mono',monospace;
                                    font-size:12px; letter-spacing:2px; padding:30px;">
               [ NO REGISTRATIONS YET ]
             </td>
@@ -565,6 +597,23 @@
           ? '[ light mode ]'
           : '[ dark mode ]';
       }
+    }
+
+    // Confirm deletion with user
+    function confirmDelete(event, name, email) {
+      const confirmed = confirm(
+        `⚠️  DELETE REGISTRATION\n\n` +
+        `Name: ${name}\n` +
+        `Email: ${email}\n\n` +
+        `This action cannot be undone. Continue?`
+      );
+      
+      if (!confirmed) {
+        event.preventDefault();
+        return false;
+      }
+      
+      return true;
     }
   </script>
 

@@ -386,6 +386,40 @@ def admin_dashboard():
 
 
 # ------------------------------------------------------------
+#  DELETE REGISTRATION  —  removes a registration entry
+# ------------------------------------------------------------
+@app.route('/admin/delete/<int:reg_id>', methods=['POST'])
+@login_required
+def admin_delete_registration(reg_id):
+    conn = get_db()
+    try:
+        # Check if the registration exists
+        row = conn.execute(
+            "SELECT id, name, email FROM registrations WHERE id = ?",
+            (reg_id,)
+        ).fetchone()
+
+        if row is None:
+            conn.close()
+            flash('Registration not found.')
+            return redirect(url_for('admin_dashboard'))
+
+        # Delete the registration
+        conn.execute("DELETE FROM registrations WHERE id = ?", (reg_id,))
+        conn.commit()
+    except Exception as e:
+        print(f"DB error while deleting registration: {e}")
+        conn.close()
+        flash('Error deleting registration. Please try again.')
+        return redirect(url_for('admin_dashboard'))
+    else:
+        conn.close()
+        flash(f'Successfully deleted registration for "{row["name"]}" ({row["email"]}).')
+    
+    return redirect(url_for('admin_dashboard'))
+
+
+# ------------------------------------------------------------
 #  EXPORT CSV  —  downloads all registrations as a .csv file
 # ------------------------------------------------------------
 @app.route('/admin/export')
@@ -480,5 +514,5 @@ with app.app_context():
     init_db()
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
     
