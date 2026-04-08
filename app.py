@@ -31,10 +31,10 @@ load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 
 app.secret_key = os.getenv('SECRET_KEY', secrets.token_urlsafe(16))  # Used to secure sessions and flash messages
 
-ADMIN_USERNAME = os.getenv('ADMIN_USERNAME', 'admin')
-ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'hack4gov2026')
+ADMIN_USERNAME = os.getenv('ADMIN_USERNAME')
+ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
 # Max number of participants allowed; controls slot counter + lock
-MAX_PARTICIPANTS = int(os.getenv('MAX_PARTICIPANTS', 20))
+MAX_PARTICIPANTS = int(os.getenv('MAX_PARTICIPANTS', 30))
 # ============================================================
 #  DATABASE SETUP 
 # ============================================================
