@@ -649,6 +649,7 @@
       -->
       <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
         <form id="export-form" action="{{ url_for('admin_export') }}" method="get" style="display:flex; gap:6px; align-items:center;">
+          <input type="hidden" id="selected-ids" name="selected_ids" value="">
           <select name="fields" class="btn" style="padding:6px 10px; background:green; color:black; border-color:var(--border);">
             <option value="all">all fields</option>
             <option value="all_name">all_name</option>
@@ -660,7 +661,7 @@
             <option value="csv">csv</option>
             <option value="html">html</option>
           </select>
-          <button type="submit" class="btn btn-export">[ export ]</button>
+          <button type="submit" class="btn btn-export" onclick="prepareExport(event)">[ export ]</button>
         </form>
       </div>
     </div>
@@ -677,6 +678,7 @@
       <table id="reg-table">
         <thead>
           <tr>
+            <th style="width:40px;"><input type="checkbox" id="select-all" onchange="selectAllRows(this.checked)"></th>
             <th style="width:50px;">#</th>
             <th style="width:16%;">Name</th>
             <th style="width:13%;">Codename</th>
@@ -700,7 +702,13 @@
           -->
           {% endraw %}
           {% for reg in registrations %}
-          <tr data-status="{{ 'confirmed' if reg.confirmed == 1 else 'pending' }}">
+          <tr data-status="{{ 'confirmed' if reg.confirmed == 1 else 'pending' }}" data-reg-id="{{ reg.id }}">
+
+            <td data-label="Select" style="text-align:center;">
+              <input type="checkbox" class="reg-checkbox" value="{{ reg.id }}" 
+                     {% if reg.confirmed == 0 %}disabled{% endif %}
+                     onchange="updateSelectAllCheckbox()">
+            </td>
 
             <td data-label="#" class="mono" style="color:var(--accent);">
               {{ loop.index }}
@@ -763,6 +771,36 @@
   </div><!-- end .content -->
 
   <script>
+    // Select/deselect all confirmed rows
+    function selectAllRows(checked) {
+      const checkboxes = document.querySelectorAll('.reg-checkbox:not(:disabled)');
+      checkboxes.forEach(cb => cb.checked = checked);
+    }
+
+    // Update "select all" checkbox state based on individual checkboxes
+    function updateSelectAllCheckbox() {
+      const checkboxes = document.querySelectorAll('.reg-checkbox:not(:disabled)');
+      const allSelectAll = document.getElementById('select-all');
+      const checkedCount = document.querySelectorAll('.reg-checkbox:not(:disabled):checked').length;
+      allSelectAll.checked = checkedCount === checkboxes.length && checkboxes.length > 0;
+      allSelectAll.indeterminate = checkedCount > 0 && checkedCount < checkboxes.length;
+    }
+
+    // Prepare export by collecting selected IDs
+    function prepareExport(event) {
+      const selectedCheckboxes = document.querySelectorAll('.reg-checkbox:checked');
+      
+      if (selectedCheckboxes.length === 0) {
+        event.preventDefault();
+        alert('Please select at least one confirmed registration to export.');
+        return false;
+      }
+
+      const selectedIds = Array.from(selectedCheckboxes).map(cb => cb.value).join(',');
+      document.getElementById('selected-ids').value = selectedIds;
+      return true;
+    }
+
     // Filter table rows by status without reloading the page
     function filterTable(status, btn) {
       // Update active button style

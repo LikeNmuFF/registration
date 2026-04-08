@@ -549,6 +549,18 @@ def esc(text):
 def admin_export():
     export_format = request.args.get('format', 'csv').lower()
     fields_key    = request.args.get('fields', 'all').lower()
+    selected_ids_str = request.args.get('selected_ids', '').strip()
+
+    # Parse selected IDs
+    selected_ids = []
+    if selected_ids_str:
+        try:
+            selected_ids = [int(id_str) for id_str in selected_ids_str.split(',') if id_str.strip()]
+        except ValueError:
+            return "Invalid selection.", 400
+
+    if not selected_ids:
+        return "No confirmed registrations selected for export.", 400
 
     # Field presets
     presets = {
@@ -562,24 +574,26 @@ def admin_export():
 
     conn = get_db()
     try:
-        # Get all registration data
-        rows = conn.execute("""
+        # Build query to get only confirmed registrations matching selected IDs
+        placeholders = ','.join('?' * len(selected_ids))
+        rows = conn.execute(f"""
             SELECT name, codename, age, course_year, contact_number, email,
                    CASE WHEN confirmed = 1 THEN 'Confirmed' ELSE 'Pending' END AS status,
                    registered_at
             FROM registrations
+            WHERE confirmed = 1 AND id IN ({placeholders})
             ORDER BY registered_at ASC
-        """).fetchall()
+        """, selected_ids).fetchall()
         
         # Special handling for codename export
         codename_rows = None
         if fields_key == 'all_codename':
-            codename_rows = conn.execute("""
+            codename_rows = conn.execute(f"""
                 SELECT codename, name, course_year
                 FROM registrations
-                WHERE codename IS NOT NULL AND codename != ''
+                WHERE confirmed = 1 AND codename IS NOT NULL AND codename != '' AND id IN ({placeholders})
                 ORDER BY registered_at ASC
-            """).fetchall()
+            """, selected_ids).fetchall()
 
     except Exception as e:
         print(f"DB error: {e}")
